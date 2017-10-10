@@ -132,7 +132,7 @@ router.post('/register', (req, res, next) => {
 
   query.getUserByEmail({email})
     .then((user) => {
-      if(user.email === email) {
+      if(user.password) {
         return next(new Error('이미 가입되어있는 유저 입니다.'))
       }
     })

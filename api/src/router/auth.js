@@ -54,7 +54,7 @@ passport.use(new LocalStrategy({ usernameField: 'email'},
     const email = username
     query.firstOrCreateUserByProvider({email})
       .then(matched => {
-        if(matched && bcrypt.compareSync(password, matched.password)) {
+        if(matched.password && bcrypt.compareSync(password, matched.password)) {
           done(null, matched)
         } else {
           done(new Error('아이디 또는 패스워드가 일치하지 않습니다.'))
@@ -73,13 +73,12 @@ passport.use(new GoogleStrategy({
   const google_access_token = accessToken
   const avatar_url = profile.photos[0] ? profile.photos[0].value : null
   const username = profile.displayName
-  console.log(profile)
   query.firstOrCreateUserByProvider(
     {email,
-    google_profile_id,
-    google_access_token,
-    avatar_url,
-    username}
+      google_profile_id,
+      google_access_token,
+      avatar_url,
+      username}
   ).then(user => {
     done(null, user)
   }).catch(err => {
@@ -94,17 +93,17 @@ passport.use(new FacebookStrategy({
   callbackURL: process.env.FACEBOOK_CALLBACK_URL,
   profileFields: ['id', 'displayName', 'photos', 'email']
 }, (accessToken, refreshToken, profile, done) => {
-  const email = profile.emails[0].value
+  const email = profile.emails[0].value ? profile.emails[0].value : profile.displayName
   const facebook_profile_id = profile.id
   const facebook_access_token = accessToken
   const avatar_url = profile.photos[0] ? profile.photos[0].value : null
   const username = profile.displayName
   query.firstOrCreateUserByProvider(
     {email,
-    facebook_profile_id,
-    facebook_access_token,
-    avatar_url,
-    username}
+      facebook_profile_id,
+      facebook_access_token,
+      avatar_url,
+      username}
   ).then(user => {
     done(null, user)
   }).catch(err => {
@@ -132,27 +131,28 @@ router.post('/register', (req, res, next) => {
 
   query.getUserByEmail({email})
     .then((user) => {
-      if(user.password) {
+      if(user && user.password) {
         return next(new Error('이미 가입되어있는 유저 입니다.'))
       }
-    })
-
-  query.firstOrCreateUserByProvider({email, password, username})
-    .then(() => {
-      passport.authenticate('local', (err, user, info) => {
-        if(err) {
-          return next(err)
-        }
-        if(!user) {
-          res.redirect(req.baseUrl)
-        }
-        req.logIn(user, err => {
-          if (err) {
-            return next(err)
-          }
-          res.redirect(req.baseUrl + '/success')
-        })
-      })(req, res, next)
+      else {
+        query.firstOrCreateUserByProvider({email, password, username})
+          .then(() => {
+            passport.authenticate('local', (err, user, info) => {
+              if(err) {
+                return next(err)
+              }
+              if(!user) {
+                res.redirect(req.baseUrl)
+              }
+              req.logIn(user, err => {
+                if (err) {
+                  return next(err)
+                }
+                res.redirect(req.baseUrl + '/success')
+              })
+            })(req, res, next)
+          })
+      }
     })
 })
 

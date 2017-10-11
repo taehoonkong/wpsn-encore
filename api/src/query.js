@@ -23,32 +23,10 @@ module.exports = {
           } 
           else if(user.password) {
             if(!user.facebook_access_token && facebook_access_token) {
-              return knex('user')
-                .where({email})
-                .update({
-                  facebook_profile_id,
-                  facebook_access_token,
-                  avatar_url
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, facebook_profile_id, facebook_access_token, avatar_url, user})
             }
             else if(!user.google_access_token && google_access_token) {
-              return knex('user')
-                .where({email})
-                .update({
-                  google_profile_id,
-                  google_access_token,
-                  avatar_url
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, google_profile_id, google_access_token, avatar_url, user})
             }
             else {
               return user
@@ -56,29 +34,10 @@ module.exports = {
           }
           else if(user.facebook_access_token) {
             if(!user.password && password) {
-              return knex('user')
-                .where({email})
-                .update({
-                  password
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, password, user})
             }
             else if(!user.google_access_token && google_access_token) {
-              return knex('user')
-                .where({email})
-                .update({
-                  google_profile_id,
-                  google_access_token
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, google_profile_id, google_access_token, user})
             }
             else {
               return user
@@ -86,29 +45,10 @@ module.exports = {
           }
           else if (user.google_access_token) {
             if(!user.password && password) {
-              return knex('user')
-                .where({email})
-                .update({
-                  password
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, password, user})
             }
             else if(!user.facebook_access_token && facebook_access_token) {
-              return knex('user')
-                .where({email})
-                .update({
-                  facebook_profile_id,
-                  facebook_access_token
-                })
-                .then((id) => {
-                  return knex('user')
-                    .where({id})
-                    .first()
-                })
+              return addInfoByProvider({email, facebook_profile_id, facebook_access_token, user})
             }
             else {
               return user
@@ -145,4 +85,31 @@ module.exports = {
       .where({id})
       .first()
   } 
+}
+
+function addInfoByProvider({ 
+  email, 
+  password=null, 
+  facebook_profile_id=null, 
+  facebook_access_token=null, 
+  google_profile_id=null, 
+  google_access_token=null, 
+  avatar_url=null, 
+  user 
+}) {
+  return knex('user')
+    .where({email})
+    .update({
+      password : user.password ? user.password : password,
+      facebook_profile_id : user.facebook_profile_id ? user.facebook_profile_id : facebook_profile_id,
+      facebook_access_token : user.facebook_access_token ? user.facebook_access_token : facebook_access_token,
+      google_profile_id : user.google_profile_id ? user.google_profile_id : google_profile_id,
+      google_access_token : user.google_access_token ? user.google_access_token : google_access_token,
+      avatar_url : user.avatar_url ? user.avatar_url : avatar_url,
+    })
+    .then(() => {
+      return knex('user')
+        .where({email})
+        .first()
+    })
 }

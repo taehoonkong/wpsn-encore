@@ -34,4 +34,29 @@ router.get('/message', (req, res) => {
   res.send('Hello SPA!')
 })
 
+// 게시물 가져오기
+router.get('/p/:id', (req, res) => {
+  query.getPostById(req.post.id).then(post => {
+    res.send(post)
+  })
+})
+
+// 게시물 작성
+router.post('/p', (req, res) => {
+  const user_id = req.user.id
+  query.createPost(user_id, username, picture, preview, article, date).then(([id]) => {
+    return query.getPostById(id)
+  }).then((post) => {
+    res.status(201)
+    res.send(post)
+  })
+})
+
+// 게시물 삭제
+router.delete('/p/:id', (req, res) => {
+  query.getPostById(id).then(() => {
+    query.detelePostById(id).then(() => res.end())
+  }).catch(next)
+})
+
 module.exports = router

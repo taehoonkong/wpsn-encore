@@ -20,7 +20,7 @@ module.exports = {
         if(user) {
           if(user.password && user.facebook_access_token && user.google_access_token) {
             return user
-          } 
+          }
           else if(user.password) {
             if(!user.facebook_access_token && facebook_access_token) {
               return knex('user')
@@ -144,5 +144,24 @@ module.exports = {
     return knex('user')
       .where({id})
       .first()
-  } 
+  },
+  createPost(user_id, username, picture, preview, article, date) {
+    return knex('post').insert({
+      user_id, username, picture, preview, article, date
+    })
+  },
+  getWholePost() {
+    return knex('post')
+  },
+  getPostById(id) {
+    return knex('post').where({id}).fisrt()
+  },
+  updatePostById(id, article) {
+    return knex('post').where({id}).update(article)
+  },
+  detelePostById(id) {
+    return knex('post').where({id}).delete()
+  }
+
 }
+

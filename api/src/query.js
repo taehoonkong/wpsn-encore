@@ -145,16 +145,16 @@ module.exports = {
       .where({id})
       .first()
   },
-  createPost(user_id, username, picture, preview, article, date) {
+  createPost({user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count}) {
     return knex('post').insert({
-      user_id, username, picture, preview, article, date
+      user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count
     })
   },
   getWholePost() {
-    return knex('post')
+    return knex('post').where()
   },
   getPostById(id) {
-    return knex('post').where({id}).fisrt()
+    return knex('post').where({id}).first()
   },
   updatePostById(id, article) {
     return knex('post').where({id}).update(article)

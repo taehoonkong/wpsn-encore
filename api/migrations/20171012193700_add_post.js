@@ -5,12 +5,17 @@ exports.up = function(knex, Promise) {
     t.integer('user_id').unsigned()
     t.foreign('user_id').references('user.id')
     t.string('username')
-    /* user 테이블이 수정되면 작동하도록 작성합니다.
     t.foreign('username').references('user.username')
-    */
     t.string('picture')
     t.string('preview')
     t.string('article')
+    t.string('track')
+    t.string('album')
+    t.string('artist')
+    t.string('geo_x')
+    t.string('geo_y')
+    t.string('address')
+    t.string('like_count')
     t.timestamp('date').defaultTo(knex.fn.now())
   })
 };

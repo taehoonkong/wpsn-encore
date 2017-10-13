@@ -161,6 +161,17 @@ module.exports = {
   },
   detelePostById(id) {
     return knex('post').where({id}).delete()
+  },
+  getLikedByUserId(id) {
+    return knex('like').where({id})
+  }
+  createLikeById({user_id, target_id}) {
+    return knex('like').insert({
+      user_id, target_id
+    })
+  }
+  deleteLikeById({user_id, target_id}) {
+    return knex('like').where({user_id, target_id}).delete()
   }
 
 }

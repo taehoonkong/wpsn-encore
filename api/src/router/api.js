@@ -35,13 +35,13 @@ router.get('/message', (req, res) => {
 })
 
 // 전체 게시물 가져오기
-router.get('/post', (req, res) => {
+router.get('/', (req, res) => {
   query.getWholePost()
 })
 
 // 게시물 가져오기
 router.get('/post/:id', (req, res) => {
-  query.getPostById(req.post.id).then(post => {
+  query.getPostById(req.params.id).then(post => {
     res.send(post)
   })
 })
@@ -57,11 +57,46 @@ router.post('/post', (req, res) => {
   })
 })
 
+// 게시물 수정
+router.patch('/post/:id/edit', (req, res) => {
+  const id = req.params.id
+  const article = req.body.article
+  const user_id = req.user.id
+  query.getPostById(id)
+    .then(() => {
+      query.updatePostById(id, article)
+        .then(id => {
+          return query.getPostById(id)
+        })
+        .then(post => {
+          res.send(post)
+        })
+    })
+    .catch(next)
+})
+
 // 게시물 삭제
-router.delete('/p/:id', (req, res) => {
-  query.getPostById(id).then(() => {
+router.delete('/post/:id', (req, res) => {
+  query.getPostById(req.params.id).then(() => {
     query.detelePostById(id).then(() => res.end())
   }).catch(next)
+})
+
+// 특정 유저가 좋아요한 게시물
+router.get('/user/:id/liked', (req, res) => {
+  query.getLikedByUserId(req.params.id).then(post => {
+    res.send(post)
+  })
+})
+
+// 좋아요 등록
+router.post('/post/:id/like', (req, res) => {
+  query.createLikeById(req.params.id)
+})
+
+// 좋아요 해제
+router.delete('/post/:id/like', (req, res) => {
+  query.deleteLikeById(req.user.id, req.params.id)
 })
 
 module.exports = router

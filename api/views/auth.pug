@@ -1,34 +1,41 @@
 extends layout/main.pug
 
 block body
-  h1 로그인
+  br
+
+  form(method='POST' action='/auth/local')
+    input(type='hidden' name='_csrf' value=csrfToken)
+    legend 로그인
+    div.form-group
+      label(for='email') Email
+      input.form-control(type='text' id='email' placeholder='email' name='email')
+    div.form-group
+      label(for='password') Password
+      input.form-control(type='password' id='password' placeholder='password' name='password')
+    button.btn.btn-primary(type='submit') 로그인
+    a.btn.btn-link(href='/auth/forgot') 비밀번호를 잊어버리셨습니까?
+
+  br
+
+  legend SNS로그인
   p: a(href='/auth/google') Google로 로그인
   p: a(href='/auth/facebook') Facebook으로 로그인
-  form(method='POST' action='/auth/local')
-          input(type='hidden' name='_csrf' value=csrfToken)
-          div.form-group
-            label(for='email') Email
-            input.form-control(type='text' id='email' placeholder='email' name='email')
-          div.form-group
-            label(for='password') Password
-            input.form-control(type='password' id='password' placeholder='password' name='password')
-          button.btn.btn-primary(type='submit') 로그인
 
-  h1 회원가입 
+  br
+
   form(method='POST' action='/auth/register')
-          input(type='hidden' name='_csrf' value=csrfToken)
-          div.form-group
-            label(for='email') Email
-            input.form-control(type='text' id='email' placeholder='email' name='email')
-          div.form-group
-            label(for='username') UserName
-            input.form-control(type='text' id='username' placeholder='username' name='username')
-          div.form-group
-            label(for='password') Password
-            input.form-control(type='password' id='password' placeholder='password' name='password')
-          div.form-group
-            label(for='password2') Password2
-            input.form-control(type='password' id='password2' placeholder='password2' name='password2')
-
-          button.btn.btn-primary(type='submit') 회원가입
-
+    input(type='hidden' name='_csrf' value=csrfToken)
+    legend 회원가입
+    div.form-group
+      label(for='email') Email
+      input.form-control(type='text' id='email' placeholder='email' name='email')
+    div.form-group
+      label(for='username') UserName
+      input.form-control(type='text' id='username' placeholder='username' name='username')
+    div.form-group
+      label(for='password') Password
+      input.form-control(type='password' id='password' placeholder='password' name='password')
+    div.form-group
+      label(for='confirm') Confirm Password
+      input.form-control(type='password' id='confirm' placeholder='confirm password' name='confirm')
+    button.btn.btn-primary(type='submit') 회원가입

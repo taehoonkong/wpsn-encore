@@ -84,7 +84,40 @@ module.exports = {
     return knex('user')
       .where({id})
       .first()
-  } 
+  },
+  resetEmailToken({email, resetPasswordToken, resetPasswordExpires}) {
+    return knex('user')
+      .where({email})
+      .update({
+        resetPasswordToken,
+        resetPasswordExpires
+      })
+      .then(() => {
+        return knex('user')
+          .where({email})
+          .first()
+      })
+  },
+  resetEmailFindToken({resetPasswordToken}) {
+    return knex('user')
+      .where({resetPasswordToken})
+      .andWhere('resetPasswordExpires', '>', Date.now())
+      .first()
+  },
+  resetUserEmail({email, password}) {
+    return knex('user')
+      .where({email})
+      .update({
+        password,
+        resetPasswordToken: null,
+        resetPasswordExpires: null
+      })
+      .then(() => {
+        return knex('user')
+          .where({email})
+          .first()
+      })
+  }
 }
 
 function addInfoByProvider({ 

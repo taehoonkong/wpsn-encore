@@ -10,6 +10,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
+const sgMail = require('@sendgrid/mail')
 
 const util = require('../util')
 const query = require('../query')
@@ -52,9 +54,12 @@ passport.deserializeUser((str, done) => {
 passport.use(new LocalStrategy({ usernameField: 'email'},
   (username, password, done) => {
     const email = username
-    query.firstOrCreateUserByProvider({email})
+    query.getUserByEmail({email})
       .then(matched => {
-        if(matched.password && bcrypt.compareSync(password, matched.password)) {
+        if(!matched) {
+          done(new Error('아이디 또는 패스워드가 일치하지 않습니다.'))
+        }
+        else if(matched.password && bcrypt.compareSync(password, matched.password)) {
           done(null, matched)
         } else {
           done(new Error('아이디 또는 패스워드가 일치하지 않습니다.'))
@@ -132,7 +137,7 @@ router.post('/register', (req, res, next) => {
   query.getUserByEmail({email})
     .then((user) => {
       if(user && user.password) {
-        return next(new Error('이미 가입되어있는 유저 입니다.'))
+        return next(new util.userAlreadyExists('이미 가입되어 있는 사용자 입니다.'))
       }
       else {
         query.firstOrCreateUserByProvider({email, password, username})
@@ -163,7 +168,7 @@ router.post('/local', (req, res, next) => {
       return next(err)
     }
     if(!user) {
-      return res.redirect(req.baseUrl)  
+      return next(new util.requireField('email과 비밀번호를 입력해 주세요.'))  
     }
     req.logIn(user, err => {
       if (err) {
@@ -214,10 +219,89 @@ router.get('/facebook/callback', (req, res, next) => {
   })(req, res, next)
 })
 
+router.get('/forgot', (req, res, next) => {
+  res.render('forgot.pug', {
+    user: req.user
+  })
+})
+
+router.post('/forgot', (req, res, next) => {
+  const { email } = req.body
+  util.createToken()
+    .then((token) => {
+      const resetPasswordToken = token
+      const resetPasswordExpires = Date.now() + 360000
+      query.getUserByEmail({email})
+        .then(user => {
+          if(!user) {
+            return next(new util.emailNotExists('등록되지 않은 이메일 입니다.'))
+          }
+          query.resetEmailToken({email, resetPasswordToken, resetPasswordExpires})
+            .then(user => {
+              sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+              const msg = {
+                to: user.email,
+                from: 'admin@encore.com',
+                subject: 'Encore Password Reset',
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                'http://' + req.headers.host + '/auth/reset/' + token + '\n\n' +
+                'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+              }
+              sgMail.send(msg, (err) => {
+                req.flash('info', '비밀번호 재설정 이메일이 ' + user.email + ' (으)로 전송되었습니다.')
+                res.redirect(req.baseUrl)
+              })
+            })
+        })
+    })
+})
+
+router.get('/reset/:token', (req, res, next) => {
+  const resetPasswordToken = req.params.token
+  query.resetEmailFindToken({resetPasswordToken})
+    .then(user => {
+      if(!user) {
+        return next(new util.tokenInvalidExpires('토큰이 유효하지 않거나 유효기간이 지났습니다.'))
+      }
+      res.render('reset.pug')
+    })
+})
+
+router.post('/reset/:token', (req, res, next) => {
+  const resetPasswordToken = req.params.token
+  const password = bcrypt.hashSync(req.body.password, 10)
+  query.resetEmailFindToken({resetPasswordToken})
+    .then(user => {
+      if(!user) {
+        return next(new util.tokenInvalidExpires('토큰이 유효하지 않거나 유효기간이 지났습니다.'))
+      }
+      const {email} = user
+      query.resetUserEmail({email, password})
+        .then(user => {
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+          const msg = {
+            to: user.email,
+            from: 'admin@encore.com',
+            subject: 'Encore Password Reset Success',
+            text: 'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+          }
+          sgMail.send(msg, (err) => {
+            req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
+            res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
+          })
+        })
+    })
+})
+
+router.get('/reset/:token/complete', (req, res, next) => {
+  res.render('resetComplete.pug')
+})
+
 // Error Handling
 router.use((err, req, res, next) => {
   req.flash('error', err.message)
-  res.redirect(req.baseUrl)
+  res.redirect(`${req.baseUrl}${err.redirectUrl ? err.redirectUrl : ''}`)
 })
 
 module.exports = router

@@ -11,6 +11,8 @@ exports.up = function(knex, Promise) {
     */
     t.string('email')
     t.string('password')
+    t.string('resetPasswordToken')
+    t.string('resetPasswordExpires')
     t.string('facebook_profile_id')
     t.string('facebook_access_token')
     t.string('google_profile_id')

@@ -1,0 +1,11 @@
+extends layout/main.pug
+
+block body
+  br
+  form(method='POST')
+    input(type='hidden' name='_csrf' value=csrfToken)
+    legend 비밀번호 찾기
+    .form-group
+      label(for='email') Email
+      input.form-control(type='text', name='email', placeholder='email' autofocus)
+    button.btn.btn-primary(type='submit') 비밀번호 재설정 이메일 전송

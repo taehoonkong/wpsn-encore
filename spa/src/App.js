@@ -33,9 +33,9 @@ export default class App extends Component {
       }
     })
       .then(res => {
-        const {email, username, avatar} = res.data
+        const {id, email, username, avatar} = res.data
         this.setState({
-          userInfo: `${email}:${username}:${avatar}`
+          userInfo: `${id}:${email}:${username}:${avatar}`
         })
       })
   }

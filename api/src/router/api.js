@@ -23,6 +23,7 @@ router.get('/user', (req, res) => {
   query.getUserById(req.user.id)
     .then(user => {
       res.send({
+        id: req.user.id,
         email: user.email,
         username: user.username,
         avatar: user.avatar_url

@@ -4,8 +4,6 @@ exports.up = function(knex, Promise) {
     t.increments()
     t.integer('user_id').unsigned()
     t.foreign('user_id').references('user.id')
-    t.string('username')
-    t.foreign('username').references('user.username')
     t.string('picture')
     t.string('preview')
     t.string('article')

@@ -2,6 +2,7 @@ const express = require('express')
 const expressJwt = require('express-jwt')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const axios = require('axios')
 
 const query = require('../query')
 
@@ -31,8 +32,22 @@ router.get('/user', (req, res) => {
     })
 })
 
-router.get('/message', (req, res) => {
-  res.send('Hello SPA!')
+// Myfeed 가져오기
+router.get('/feed', (req, res) => {
+  const user_id = req.user.id
+  query.getFeedByUserId(user_id)
+    .then(feed => {
+      res.send(feed)
+    })
+})
+
+// 다른 유저의 Feed 가져오기
+router.get('/feed/:userId', (req, res) => {
+  const user_id = req.params.userId
+  query.getFeedByUserId(user_id)
+    .then(feed => {
+      res.send(feed)
+    })
 })
 
 // 전체 게시물 가져오기
@@ -43,16 +58,7 @@ router.get('/post', (req, res) => {
   })
 })
 
-// myfeed 가져오기
-router.get('/feed/:id', (req, res) => {
-  const user_id = req.params.id
-  query.getFeedPost(user_id)
-    .then(feed => {
-      res.send(feed)
-    })
-})
-
-// 게시물&코멘트 가져오기
+// 게시물 & 코멘트 가져오기
 router.get('/post/:id', (req, res) => {
   query.getPostById(req.params.id).then(post => {
     query.getCommentByPostId(req.params.id).then(comment => {
@@ -70,21 +76,24 @@ router.get('/post/:id/comment', (req, res) => {
 
 // 게시물 작성
 router.post('/post', (req, res) => {
-  const user_id = 2 // req.user.id
-  const {username, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count} = req.body
-  query.createPost(user_id, username, picture_small, picture_bit, preview, article, album, track, artist, geo_x, geo_y, address, like_count).then(([id]) => {
-    return query.getPostById(id)
-  }).then((post) => {
-    res.status(201)
-    res.send(post)
-  })
+  const user_id = req.user.id
+  const {
+    picture_small, picture_big, preview, article, 
+    album, track, artist, geo_x, geo_y, address, like_count } = req.body
+  query.createPost({
+    user_id, picture_small, picture_big, preview, article, 
+    album, track, artist, geo_x, geo_y, address, like_count})
+    .then((post) => {
+      res.status(201)
+      res.send(post)
+    })
 })
 
 // 게시물 수정
 router.patch('/post/:id', (req, res) => {
   const id = req.params.id
-  const article = req.body.article
   const user_id = req.user.id
+  const article = req.body.article
   query.getPostById(id)
     .then(() => {
       query.updatePostById(id, article)
@@ -129,6 +138,15 @@ router.post('/post/:id/like', (req, res) => {
 // 좋아요 해제
 router.delete('/post/:id/like', (req, res) => {
   query.deleteLikeById(req.user.id, req.params.id)
+})
+
+router.post('/music/:keyword', (req, res) => {
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/search?q=${keyword}`)
+    .then(data => {
+      console.log(data)
+      res.send(data)
+    })
 })
 
 module.exports = router

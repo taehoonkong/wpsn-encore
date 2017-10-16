@@ -118,16 +118,21 @@ module.exports = {
           .first()
       })
   },
-  createPost(user_id, username, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count) {
+  createPost({user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count}) {
     return knex('post').insert({
-      user_id, username, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count
+      user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count
+    })
+    .then(([id]) => {
+      return knex('post')
+        .where({id})
+        .first()
     })
   },
   getWholePost() {
-    return knex('post')
+    return knex('post').orderBy('date', 'desc')
   },
-  getFeedPost(user_id) {
-    return knex('post').where({user_id})
+  getFeedByUserId(user_id) {
+    return knex('post').where({user_id}).orderBy('date', 'desc')
   },
   getPostById(id) {
     return knex('post').where({id}).first()

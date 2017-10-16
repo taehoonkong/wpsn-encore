@@ -37,11 +37,19 @@ router.get('/message', (req, res) => {
 
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
-  const user_id = req.user.id
-  query.getWholePost(user_id)
+  query.getWholePost()
     .then(post => { 
       res.send(post)
   })
+})
+
+// myfeed 가져오기
+router.get('/feed', (req, res) => {
+  const user_id = req.user.id
+  query.getFeedPost(user_id)
+    .then(feed => {
+      res.send(feed)
+    })
 })
 
 // 게시물&코멘트 가져오기

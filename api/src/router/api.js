@@ -44,8 +44,8 @@ router.get('/post', (req, res) => {
 })
 
 // myfeed 가져오기
-router.get('/feed', (req, res) => {
-  const user_id = req.user.id
+router.get('/feed/:id', (req, res) => {
+  const user_id = req.params.id
   query.getFeedPost(user_id)
     .then(feed => {
       res.send(feed)

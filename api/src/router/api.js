@@ -140,11 +140,11 @@ router.delete('/post/:id/like', (req, res) => {
   query.deleteLikeById(req.user.id, req.params.id)
 })
 
-router.post('/music/:keyword', (req, res) => {
+// Get Music Info
+router.get('/music/:keyword', (req, res) => {
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/search?q=${keyword}`)
     .then(result => {
-      console.log(result.data)
       res.send(result.data)
     })
 })

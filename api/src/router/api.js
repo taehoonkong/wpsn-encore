@@ -143,9 +143,9 @@ router.delete('/post/:id/like', (req, res) => {
 router.post('/music/:keyword', (req, res) => {
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/search?q=${keyword}`)
-    .then(data => {
-      console.log(data)
-      res.send(data)
+    .then(result => {
+      console.log(result.data)
+      res.send(result.data)
     })
 })
 

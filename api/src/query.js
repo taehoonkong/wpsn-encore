@@ -123,8 +123,8 @@ module.exports = {
       user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count
     })
   },
-  getWholePost() {
-    return knex('post')
+  getWholePost(user_id) {
+    return knex('post').where({user_id})
   },
   getPostById(id) {
     return knex('post').where({id}).first()

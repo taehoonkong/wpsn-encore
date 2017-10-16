@@ -37,8 +37,10 @@ router.get('/message', (req, res) => {
 
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
-  query.getWholePost().then(post => {
-    res.send(post)
+  const user_id = req.user.id
+  query.getWholePost(user_id)
+    .then(post => { 
+      res.send(post)
   })
 })
 

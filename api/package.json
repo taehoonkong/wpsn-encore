@@ -1,11 +1,11 @@
 {
-  "name": "wpsn-oauth",
+  "name": "wpsn-encore",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "debug": "nodemon --inspect src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "debug": "node --inspect src/index.js"
   },
   "keywords": [],
   "author": "",

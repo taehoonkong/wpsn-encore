@@ -20,7 +20,7 @@ module.exports = {
         if(user) {
           if(user.password && user.facebook_access_token && user.google_access_token) {
             return user
-          } 
+          }
           else if(user.password) {
             if(!user.facebook_access_token && facebook_access_token) {
               return addInfoByProvider({email, facebook_profile_id, facebook_access_token, avatar_url, user})
@@ -117,6 +117,45 @@ module.exports = {
           .where({email})
           .first()
       })
+  },
+  createPost(user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count) {
+    return knex('post').insert({
+      user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count
+    })
+  },
+  getWholePost() {
+    return knex('post')
+  },
+  getPostById(id) {
+    return knex('post').where({id}).first()
+  },
+  updatePostById(id, article) {
+    return knex('post').where({id}).update(article)
+  },
+  detelePostById(id) {
+    return knex('post').where({id}).delete()
+  },
+  getLikedByUserId(id) {
+    return knex('like').where({id})
+  },
+  createLikeById({user_id, target_id}) {
+    return knex('like').insert({
+      user_id, target_id
+    })
+  },
+  deleteLikeById({user_id, target_id}) {
+    return knex('like').where({user_id, target_id}).delete()
+  },
+  createCommentByPostId(user_id, username, target_id, comment) {
+    return knex('comment').insert({
+      user_id, username, target_id, comment
+    })
+  },
+  deleteCommentById(id) {
+    return knex('comment').where({id}).delete()
+  },
+  getCommentByPostId(target_id) {
+    return knex('comment').where({target_id}).select('id', 'user_id', 'comment', 'date')
   }
 }
 

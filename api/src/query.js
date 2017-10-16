@@ -118,9 +118,9 @@ module.exports = {
           .first()
       })
   },
-  createPost(user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count) {
+  createPost(user_id, username, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count) {
     return knex('post').insert({
-      user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count
+      user_id, username, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count
     })
   },
   getWholePost(user_id) {

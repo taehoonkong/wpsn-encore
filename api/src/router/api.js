@@ -67,7 +67,7 @@ router.get('/post/:id/comment', (req, res) => {
 
 // 게시물 작성
 router.post('/post', (req, res) => {
-  const user_id = req.user.id
+  const user_id = 1 //req.user.id
   const {
     picture_small, picture_big, preview, article,
     album, track, artist, geo_x, geo_y, address, like_count } = req.body
@@ -100,9 +100,10 @@ router.patch('/post/:id', (req, res) => {
 
 // 게시물 삭제
 router.delete('/post/:id', (req, res) => {
-  query.getPostById(req.params.id).then(() => {
-    query.detelePostById(id).then(() => res.end())
-  }).catch(next)
+  query.getPostById(req.params.id).then((post) => {
+    query.detelePostById(post.id).then(() => res.end())
+  })
+  //.catch(next)
 })
 
 // 코멘트 작성
@@ -189,7 +190,7 @@ router.get('/music/artist/album/:keyword', (req, res) => {
         }
       }
       res.send(return_result)
-    }) 
+    })
 })
 
 router.get('/music/album/:keyword', (req, res) => {

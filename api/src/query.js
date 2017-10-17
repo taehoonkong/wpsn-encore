@@ -123,7 +123,10 @@ module.exports = {
       user_id, username, picture, preview, article, album, track, artist, geo_x, geo_y, address, like_count
     })
   },
-  getWholePost(user_id) {
+  getWholePost() {
+    return knex('post')
+  },
+  getPostByUserId(user_id) {
     return knex('post').where({user_id})
   },
   getPostById(id) {
@@ -159,15 +162,15 @@ module.exports = {
   }
 }
 
-function addInfoByProvider({ 
-  email, 
-  password=null, 
-  facebook_profile_id=null, 
-  facebook_access_token=null, 
-  google_profile_id=null, 
-  google_access_token=null, 
-  avatar_url=null, 
-  user 
+function addInfoByProvider({
+  email,
+  password=null,
+  facebook_profile_id=null,
+  facebook_access_token=null,
+  google_profile_id=null,
+  google_access_token=null,
+  avatar_url=null,
+  user
 }) {
   return knex('user')
     .where({email})

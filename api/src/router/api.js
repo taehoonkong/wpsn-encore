@@ -32,15 +32,6 @@ router.get('/user', (req, res) => {
     })
 })
 
-// Myfeed 가져오기
-router.get('/feed', (req, res) => {
-  const user_id = req.user.id
-  query.getFeedByUserId(user_id)
-    .then(feed => {
-      res.send(feed)
-    })
-})
-
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
   query.getWholePost()

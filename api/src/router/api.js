@@ -145,17 +145,40 @@ router.get('/music/:keyword', (req, res) => {
 
 router.get('/music/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=5&q=${keyword}`)
     .then(result => {
-      res.send(result.data)
+      let return_result = []
+      const {data} = result.data
+      for(let i = 0; i < data.length; i++) {
+        return_result.push({
+          artist_id: data[i].id,
+          artist_name: data[i].name,
+          artist_picture_sm: data[i].picture_small,
+          artist_picture_lg: data[i].picture_big,
+          aritst_top_track: data[i].tracklist
+        })
+      }
+      res.send(return_result)
     })
 })
 
 router.get('/music/album/:keyword', (req, res) => {
   const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=5&q=${keyword}`)
     .then(result => {
-      res.send(result.data)
+      let return_result = []
+      const {data} = result.data
+      for(let i = 0; i < data.length; i++) {
+        return_result.push({
+          album_id: data[i].id,
+          album_artist: data[i].artist.name,
+          album_title: data[i].title,
+          album_picture_sm: data[i].cover,
+          album_picture_lg: data[i].cover_big,
+          album_tracklist: data[i].tracklist
+        })
+      }
+      res.send(return_result)
     })
 })
 
@@ -163,15 +186,37 @@ router.get('/music/album/tracklist/:keyword', (req, res) =>{
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/album/${keyword}/tracks`)
     .then(result => {
-      res.send(result.data)
+      let return_result = []
+      const {data} = result.data
+      for(let i = 0; i < data.length; i++) {
+        return_result.push({
+          track_id: data[i].id,
+          track_artist: data[i].artist.name,
+          track_name: data[i].title,
+          track_mp3_url: data[i].preview
+        })
+      }
+      res.send(return_result)
     })
 })
 
 router.get('/music/track/:keyword', (req, res) => {
   const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=5&q=${keyword}`)
     .then(result => {
-      res.send(result.data)
+      let return_result = []
+      const {data} = result.data
+      for(let i = 0; i < data.length; i++) {
+        return_result.push({
+          track_id: data[i].id,
+          track_artist: data[i].artist.name,
+          track_name: data[i].title,
+          track_mp3_url: data[i].preview,
+          track_picture_sm: data[i].album.cover,
+          track_picture_lg: data[i].album.cover_big
+        })
+      }
+      res.send(return_result)
     })
 })
 

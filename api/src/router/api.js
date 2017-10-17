@@ -37,7 +37,7 @@ router.get('/post', (req, res) => {
   query.getWholePost()
     .then(post => {
       res.send(post)
-  })
+    })
 })
 
 // 특정 사용자가 작성한 게시물 전체 가져오기
@@ -46,7 +46,7 @@ router.get('/user/:id/post', (req, res) => {
   query.getPostByUserId(user_id)
     .then(post => {
       res.send(post)
-  })
+    })
 })
 
 // 게시물 & 코멘트 가져오기
@@ -95,7 +95,7 @@ router.patch('/post/:id', (req, res) => {
           res.send(post)
         })
     })
-    //.catch(next)
+  //.catch(next)
 })
 
 // 게시물 삭제
@@ -141,42 +141,77 @@ router.get('/music/:keyword', (req, res) => {
     .then(result => {
       res.send(result.data)
     })
-  })
+})
 
 router.get('/music/artist/:keyword', (req, res) => {
-  const keyword = req.params.keyword
+  const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
+      const regexr = new RegExp(`\\b${keyword}\\b`)
       for(let i = 0; i < data.length; i++) {
-        return_result.push({
-          artist_id: data[i].id,
-          artist_name: data[i].name,
-          artist_picture_sm: data[i].picture_small,
-          artist_picture_lg: data[i].picture_big,
-          aritst_top_track: data[i].tracklist
-        })
+        let target = data[i].name.toLowerCase()
+        let res = regexr.test(target)
+        if(res) {
+          return_result.push({
+            artist_id: data[i].id,
+            artist_name: data[i].name,
+            artist_picture_sm: data[i].picture_small,
+            artist_picture_lg: data[i].picture_big,
+            aritst_top_track: data[i].tracklist
+          })
+        }
       }
       res.send(return_result)
     })
 })
 
-router.get('/music/album/:keyword', (req, res) => {
-  const keyword = req.params.keyword
+router.get('/music/artist/album/:keyword', (req, res) => {
+   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
+      const regexr = new RegExp(`\\b${keyword}\\b`)
       for(let i = 0; i < data.length; i++) {
-        return_result.push({
-          album_id: data[i].id,
-          album_artist: data[i].artist.name,
-          album_title: data[i].title,
-          album_picture_sm: data[i].cover,
-          album_picture_lg: data[i].cover_big,
-          album_tracklist: data[i].tracklist
-        })
+        let target = data[i].artist.name.toLowerCase()
+        let res = regexr.test(target)
+        if(res){
+          return_result.push({
+            album_id: data[i].id,
+            album_artist: data[i].artist.name,
+            album_title: data[i].title,
+            album_picture_sm: data[i].cover,
+            album_picture_lg: data[i].cover_big,
+            album_tracklist: data[i].tracklist
+          })
+        }
+      }
+      res.send(return_result)
+    }) 
+})
+
+router.get('/music/album/:keyword', (req, res) => {
+  const keyword = req.params.keyword.toLowerCase()
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+    .then(result => {
+      let return_result = []
+      const {data} = result.data
+      const regexr = new RegExp(`\\b${keyword}\\b`)
+      for(let i = 0; i < data.length; i++) {
+        let target = data[i].title.toLowerCase()
+        let res = regexr.test(target)
+        if(res){
+          return_result.push({
+            album_id: data[i].id,
+            album_artist: data[i].artist.name,
+            album_title: data[i].title,
+            album_picture_sm: data[i].cover,
+            album_picture_lg: data[i].cover_big,
+            album_tracklist: data[i].tracklist
+          })
+        }
       }
       res.send(return_result)
     })
@@ -201,20 +236,25 @@ router.get('/music/album/tracklist/:keyword', (req, res) =>{
 })
 
 router.get('/music/track/:keyword', (req, res) => {
-  const keyword = req.params.keyword
+  const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
+      const regexr = new RegExp(`\\b${keyword}\\b`)
       for(let i = 0; i < data.length; i++) {
-        return_result.push({
-          track_id: data[i].id,
-          track_artist: data[i].artist.name,
-          track_name: data[i].title,
-          track_mp3_url: data[i].preview,
-          track_picture_sm: data[i].album.cover,
-          track_picture_lg: data[i].album.cover_big
-        })
+        let target = data[i].title.toLowerCase()
+        let res = regexr.test(target)
+        if(res) {
+          return_result.push({
+            track_id: data[i].id,
+            track_artist: data[i].artist.name,
+            track_name: data[i].title,
+            track_mp3_url: data[i].preview,
+            track_picture_sm: data[i].album.cover,
+            track_picture_lg: data[i].album.cover_big
+          })
+        }
       }
       res.send(return_result)
     })

@@ -169,7 +169,7 @@ router.get('/music/album/tracklist/:keyword', (req, res) =>{
 
 router.get('/music/track/:keyword', (req, res) => {
   const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=1&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
       res.send(result.data)
     })

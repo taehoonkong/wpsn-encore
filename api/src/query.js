@@ -137,8 +137,8 @@ module.exports = {
   getPostById(id) {
     return knex('post').where({id}).first()
   },
-  updatePostById(id, article) {
-    return knex('post').where({id}).update(article)
+  updatePostById(id, {article}) {
+    return knex('post').where({id}).update({article})
   },
   detelePostById(id) {
     return knex('post').where({id}).delete()

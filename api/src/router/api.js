@@ -92,19 +92,19 @@ router.post('/post', (req, res) => {
 // 게시물 수정
 router.patch('/post/:id', (req, res) => {
   const id = req.params.id
-  const user_id = req.user.id
   const article = req.body.article
+
   query.getPostById(id)
-    .then(() => {
-      query.updatePostById(id, article)
-        .then(id => {
+    .then(post => {
+      query.updatePostById(post.id, {article})
+        .then(() => {
           return query.getPostById(id)
         })
         .then(post => {
           res.send(post)
         })
     })
-    .catch(next)
+    //.catch(next)
 })
 
 // 게시물 삭제
@@ -150,6 +150,6 @@ router.get('/music/:keyword', (req, res) => {
     .then(result => {
       res.send(result.data)
     })
-})
+  })
 
 module.exports = router

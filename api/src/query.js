@@ -129,13 +129,34 @@ module.exports = {
     })
   },
   getWholePost() {
-    return knex('post').orderBy('date', 'desc')
+    return knex('post')
+      .join('user', 'post.user_id', '=', 'user.id')
+      .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
+        'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.like_count', 'post.date'
+      )
+      .orderBy('post.date', 'desc')
   },
   getPostByUserId(user_id) {
-    return knex('post').where({user_id}).orderBy('date', 'desc')
+    return knex('post')
+      .join('user', 'post.user_id', '=', 'user.id')
+      .select('post.id', 'post.user_id' ,'user.username', 'user.avatar_url',
+        'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.like_count', 'post.date'
+      )
+      .where({user_id}).orderBy('date', 'desc')
   },
-  getPostById(id) {
-    return knex('post').where({id}).first()
+  getPostById(post_id) {
+    return knex('post')
+      .join('user', 'post.user_id', '=', 'user.id')
+      .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
+        'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.like_count', 'post.date'
+      )
+      .where('post.id', post_id).first()
   },
   updatePostById(id, {article}) {
     return knex('post').where({id}).update({article})

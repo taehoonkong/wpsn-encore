@@ -43,7 +43,6 @@ router.get('/feed', (req, res) => {
 
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
-  const user_id = req.user.id
   query.getWholePost()
     .then(post => {
       res.send(post)
@@ -51,8 +50,8 @@ router.get('/post', (req, res) => {
 })
 
 // 특정 사용자가 작성한 게시물 전체 가져오기
-router.get('/user/post/:id', (req, res) => {
-  const user_id = req.user.id
+router.get('/user/:id/post', (req, res) => {
+  const user_id = req.params.id
   query.getPostByUserId(user_id)
     .then(post => {
       res.send(post)

@@ -117,10 +117,13 @@ router.delete('/post/:id', (req, res) => {
 // 코멘트 작성
 router.post('/post/:id/comment', (req, res) => {
   const target_id = req.params.id
-  const username = 'testman'
   const comment = "ah ah mic test"
-  const user_id = 1 // req.user.id
-  query.createCommentByPostId(user_id, username, target_id, comment)
+  const user_id = 2 // req.user.id
+  query.createCommentByPostId({user_id, target_id, comment})
+    .then((comment) => {
+      res.status(201)
+      res.send(comment)
+    })
 })
 
 // 특정 유저가 좋아요한 게시물

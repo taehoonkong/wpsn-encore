@@ -154,9 +154,14 @@ module.exports = {
   deleteLikeById({user_id, target_id}) {
     return knex('like').where({user_id, target_id}).delete()
   },
-  createCommentByPostId(user_id, username, target_id, comment) {
+  createCommentByPostId({user_id, target_id, comment}) {
     return knex('comment').insert({
-      user_id, username, target_id, comment
+      user_id, target_id, comment
+    })
+    .then(([id]) => {
+      return knex('comment')
+        .where({id})
+        .first()
     })
   },
   deleteCommentById(id) {

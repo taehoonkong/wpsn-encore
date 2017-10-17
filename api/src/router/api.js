@@ -149,4 +149,24 @@ router.get('/music/:keyword', (req, res) => {
     })
 })
 
+router.get('/music/artist/:keyword', (req, res) => {
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=1&q=${keyword}`)
+    .then(result => {
+      const {tracklist} = result.data.data[0]
+      axios.get(tracklist)
+        .then(result => {
+          console.log(result.data)
+        })
+    })
+})
+
+router.get('/music/album/:keyword', (req, res) => {
+
+})
+
+router.get('/music/track/:keyword', (req, res) => {
+
+})
+
 module.exports = router

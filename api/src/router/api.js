@@ -143,4 +143,37 @@ router.get('/music/:keyword', (req, res) => {
     })
   })
 
+router.get('/music/artist/:keyword', (req, res) => {
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
+    .then(result => {
+      res.send(result.data)
+    })
+})
+
+router.get('/music/album/:keyword', (req, res) => {
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+    .then(result => {
+      res.send(result.data)
+    })
+})
+
+router.get('/music/album/tracklist/:keyword', (req, res) =>{
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/album/${keyword}/tracks`)
+    .then(result => {
+      res.send(result.data)
+    })
+})
+
+router.get('/music/track/:keyword', (req, res) => {
+  const keyword = req.params.keyword
+  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=1&q=${keyword}`)
+    .then(result => {
+      res.send(result.data)
+    })
+})
+
+
 module.exports = router

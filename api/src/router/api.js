@@ -152,6 +152,8 @@ router.get('/music/:keyword', (req, res) => {
     })
 })
 
+// artist 검색 
+// keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
@@ -177,6 +179,8 @@ router.get('/artist/:keyword', (req, res) => {
     })
 })
 
+// artist 검색 후 해당 artist가 발매한 음반을 검색 
+// keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/album/:keyword', (req, res) => {
    const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
@@ -205,6 +209,8 @@ router.get('/artist/album/:keyword', (req, res) => {
     })
 })
 
+// album 검색 
+// keyword에 album name을 넣어주어야 한다.
 router.get('/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
@@ -231,6 +237,8 @@ router.get('/album/:keyword', (req, res) => {
     })
 })
 
+// album 검색 후에 해당 album에 담겨있는 tracklist를 검색
+// keyword에 album_id를 넣어주어야 한다.
 router.get('/album/tracklist/:keyword', (req, res) =>{
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/album/${keyword}`)
@@ -256,6 +264,8 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
     })
 })
 
+// track 검색
+// keyword에 track name을 넣어주어야 한다.
 router.get('/track/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)

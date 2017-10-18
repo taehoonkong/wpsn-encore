@@ -109,7 +109,7 @@ router.delete('/post/:id', (req, res) => {
 // 코멘트 작성
 router.post('/post/:id/comment', (req, res) => {
   const target_id = req.params.id
-  const comment = "ah ah mic test"
+  const comment = "ah ah mic test" // req.body.comment
   const user_id = 2 // req.user.id
   query.createCommentByPostId({user_id, target_id, comment})
     .then((comment) => {
@@ -127,12 +127,20 @@ router.get('/user/:id/liked', (req, res) => {
 
 // 좋아요 등록
 router.post('/post/:id/like', (req, res) => {
-  query.createLikeById(req.params.id)
+  const user_id = req.user.id
+  const target_id = req.params.id
+  query.createLikeById({user_id, target_id})
+    .then((post) => {
+      res.status(201)
+      res.send(post)
+    })
 })
 
 // 좋아요 해제
 router.delete('/post/:id/like', (req, res) => {
-  query.deleteLikeById(req.user.id, req.params.id)
+  const user_id = req.user.id
+  const target_id = req.params.id
+  query.deleteLikeById(user_id, target_id).then(() => res.end())
 })
 
 // Get Music Info
@@ -144,7 +152,7 @@ router.get('/music/:keyword', (req, res) => {
     })
 })
 
-router.get('/artist/:keyword', (req, res) => {
+router.get('/music/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
@@ -169,7 +177,7 @@ router.get('/artist/:keyword', (req, res) => {
     })
 })
 
-router.get('/artist/album/:keyword', (req, res) => {
+router.get('/music/artist/album/:keyword', (req, res) => {
    const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
@@ -197,7 +205,7 @@ router.get('/artist/album/:keyword', (req, res) => {
     })
 })
 
-router.get('/album/:keyword', (req, res) => {
+router.get('/music/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
     .then(result => {
@@ -223,7 +231,7 @@ router.get('/album/:keyword', (req, res) => {
     })
 })
 
-router.get('/artist/album/tracklist/:keyword', (req, res) =>{
+router.get('/music/album/tracklist/:keyword', (req, res) =>{
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/album/${keyword}`)
     .then(result => {
@@ -249,7 +257,7 @@ router.get('/artist/album/tracklist/:keyword', (req, res) =>{
     })
 })
 
-router.get('/track/:keyword', (req, res) => {
+router.get('/music/track/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
     .then(result => {

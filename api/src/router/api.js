@@ -67,7 +67,7 @@ router.get('/post/:id/comment', (req, res) => {
 
 // 게시물 작성
 router.post('/post', (req, res) => {
-  const user_id = 1 //req.user.id
+  const user_id = req.user.id
   const {
     picture_small, picture_big, preview, article,
     album, track, artist, geo_x, geo_y, address, like_count } = req.body
@@ -109,8 +109,8 @@ router.delete('/post/:id', (req, res) => {
 // 코멘트 작성
 router.post('/post/:id/comment', (req, res) => {
   const target_id = req.params.id
-  const comment = "ah ah mic test" // req.body.comment
-  const user_id = 2 // req.user.id
+  const comment = req.body.comment
+  const user_id = req.user.id
   query.createCommentByPostId({user_id, target_id, comment})
     .then((comment) => {
       res.status(201)

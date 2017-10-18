@@ -240,7 +240,6 @@ router.get('/music/album/tracklist/:keyword', (req, res) =>{
       const album_cover_sm = data.cover
       const album_cover_lg = data.cover_big
       const release_date = data.release_date
-      // const type = data.type
       for(let i = 0; i < data.tracks.data.length; i++) {
         return_result.push({
           track_id: data.tracks.data[i].id,

@@ -133,7 +133,7 @@ module.exports = {
       .join('user', 'post.user_id', '=', 'user.id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
       .orderBy('post.date', 'desc')
@@ -143,7 +143,7 @@ module.exports = {
       .join('user', 'post.user_id', '=', 'user.id')
       .select('post.id', 'post.user_id' ,'user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
       .where({user_id}).orderBy('date', 'desc')
@@ -153,7 +153,7 @@ module.exports = {
       .join('user', 'post.user_id', '=', 'user.id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
       .where('post.id', post_id).first()
@@ -171,9 +171,14 @@ module.exports = {
     return knex('like').insert({
       user_id, target_id
     })
+    .then(([id]) => {
+      return knex('post')
+        .where({id})
+        .first()
+    })
   },
-  deleteLikeById({user_id, target_id}) {
-    return knex('like').where({user_id, target_id}).delete()
+  deleteLikeById(user_id, target_id) {
+    return knex('like').where(user_id, target_id).delete()
   },
   createCommentByPostId({user_id, target_id, comment}) {
     return knex('comment').insert({

@@ -160,7 +160,8 @@ router.get('/artist/:keyword', (req, res) => {
             artist_name: data[i].name,
             artist_picture_sm: data[i].picture_small,
             artist_picture_lg: data[i].picture_big,
-            aritst_top_track: data[i].tracklist
+            aritst_top_track: data[i].tracklist,
+            type: data[i].type
           })
         }
       }
@@ -185,7 +186,10 @@ router.get('/artist/album/:keyword', (req, res) => {
             album_title: data[i].title,
             album_picture_sm: data[i].cover,
             album_picture_lg: data[i].cover_big,
-            album_tracklist: data[i].tracklist
+            album_tracklist: data[i].tracklist,
+            artist_picture_sm: data[i].artist.picture,
+            artist_picture_lg: data[i].artist.picture_big,
+            type: data[i].type
           })
         }
       }
@@ -210,7 +214,8 @@ router.get('/album/:keyword', (req, res) => {
             album_title: data[i].title,
             album_picture_sm: data[i].cover,
             album_picture_lg: data[i].cover_big,
-            album_tracklist: data[i].tracklist
+            album_tracklist: data[i].tracklist,
+            type: data[i].type
           })
         }
       }
@@ -220,16 +225,24 @@ router.get('/album/:keyword', (req, res) => {
 
 router.get('/artist/album/tracklist/:keyword', (req, res) =>{
   const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/album/${keyword}/tracks`)
+  axios.get(`https://api.deezer.com/album/${keyword}`)
     .then(result => {
       let return_result = []
-      const {data} = result.data
-      for(let i = 0; i < data.length; i++) {
+      const data = result.data
+      const album_cover_sm = data.cover
+      const album_cover_lg = data.cover_big
+      const release_date = data.release_date
+      // const type = data.type
+      for(let i = 0; i < data.tracks.data.length; i++) {
         return_result.push({
-          track_id: data[i].id,
-          track_artist: data[i].artist.name,
-          track_name: data[i].title,
-          track_mp3_url: data[i].preview
+          track_id: data.tracks.data[i].id,
+          track_artist: data.tracks.data[i].artist.name,
+          track_name: data.tracks.data[i].title,
+          track_mp3_url: data.tracks.data[i].preview,
+          album_cover_sm,
+          album_cover_lg,
+          release_date,
+          type: data.tracks.data[i].type
         })
       }
       res.send(return_result)
@@ -253,7 +266,10 @@ router.get('/track/:keyword', (req, res) => {
             track_name: data[i].title,
             track_mp3_url: data[i].preview,
             track_picture_sm: data[i].album.cover,
-            track_picture_lg: data[i].album.cover_big
+            track_picture_lg: data[i].album.cover_big,
+            album_id: data[i].album.id,
+            album_title: data[i].album.title,
+            type: data[i].type
           })
         }
       }

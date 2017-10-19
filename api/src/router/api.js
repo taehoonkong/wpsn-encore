@@ -245,6 +245,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
     .then(result => {
       let return_result = []
       const data = result.data
+      const album_artist = data.artist.name
       const album_cover_sm = data.cover
       const album_cover_lg = data.cover_big
       const release_date = data.release_date
@@ -254,6 +255,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
           track_artist: data.tracks.data[i].artist.name,
           track_name: data.tracks.data[i].title,
           track_mp3_url: data.tracks.data[i].preview,
+          album_artist,
           album_cover_sm,
           album_cover_lg,
           release_date,

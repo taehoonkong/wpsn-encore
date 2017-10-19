@@ -249,10 +249,7 @@ module.exports = function(io) {
                   to: user.email,
                   from: 'admin@encore.com',
                   subject: 'Encore Password Reset',
-                  text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-                  'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                  'http://' + req.headers.host + '/auth/reset/' + token + '\n\n' +
-                  'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                  html: `<a href="http://yahoo.com" target="_self">test</a>`
                 }
                 sgMail.send(msg, (err) => {
                   req.flash('info', '비밀번호 재설정 이메일이 ' + user.email + ' (으)로 전송되었습니다.')
@@ -300,7 +297,7 @@ module.exports = function(io) {
               res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
             })*/
             const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
-            req.io.sockets.emit('test', {message});
+            req.io.sockets.emit('reset_success', {message});
             req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
             res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
           })
@@ -327,11 +324,11 @@ module.exports = function(io) {
       ack({socket_id})
     })
 
-    socket.on('reset_now', (data, ack) => {
-      const message = data.message
-      socket.broadcast.to(roomId).emit('reset_complete', {message})
-      ack({ok: true})
-    })
+    // socket.on('reset_now', (data, ack) => {
+    //   const message = data.message
+    //   socket.broadcast.to(roomId).emit('reset_complete', {message})
+    //   ack({ok: true})
+    // })
   })
 
   // Error Handling

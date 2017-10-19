@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', e => {
     console.log(data.socket_id)
   })
 
-  formEl.addEventListener('submit', e => {
-    const message = 'reset done'
-    socket.emit('reset_now', {message}, data => {
-      // 메시지 전송이 잘 되었음을 표시해 주면 된다.(회색=>검정색)
-      console.log(data.ok)
-    })
+  socket.on('reset_success', data => {
+  	window.close()
+  	window.opener.close()
   })
+
+  // formEl.addEventListener('submit', e => {
+  //   const message = 'reset done'
+  //   socket.emit('reset_now', {message}, data => {
+  //     console.log(data.ok)
+  //   })
+  // })
 
   // (user connected) 새 사용자가 접속한 사실을 출력
   socket.on('browser connected', data => {

@@ -6,16 +6,15 @@ document.addEventListener('DOMContentLoaded', e => {
     console.log(data.socket_id)
   })
 
-  socket.on('reset_complete', data => {
-    console.log(data.message)
-  })
+  // socket.on('reset_complete', data => {
+  //   console.log(data.message)
+  // })
 
-  socket.on('test', data => {
+  socket.on('reset_success', data => {
     const divListEl = document.querySelector('.alert')
     const message = data.message
-    //divListEl.removeChild()
+    divListEl.removeChild(document.querySelector('#message'))
     const divEl = appendText(divListEl, message)
-    console.log(data)
   })
 
   // (user connected) 새 사용자가 접속한 사실을 출력

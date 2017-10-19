@@ -25,6 +25,7 @@ export default class App extends Component {
     })
     this.updateUserInfo()
     this.updateMusicInfo()
+    this.postPost()
   }
 
   updateUserInfo = () => {
@@ -53,6 +54,18 @@ export default class App extends Component {
       })
   }
 
+  postPost = () => {
+    console.log('token :', this.state.token)
+    axios.post(`${API_URL}/api/post`, {
+      headers: {
+        Authorization: `Bearer ${this.state.token}`
+      }
+    })
+      .then(res => {
+        console.log(res.data)
+      })
+  }
+
   componentWillMount() {
     if (localStorage.token) {
       this.setState({
@@ -65,6 +78,7 @@ export default class App extends Component {
     if (this.state.token) {
       this.updateUserInfo()
       this.updateMusicInfo()
+      this.postPost()
     }
   }
 

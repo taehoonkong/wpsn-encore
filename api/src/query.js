@@ -196,7 +196,11 @@ module.exports = {
     return knex('comment').where({id}).delete()
   },
   getCommentByPostId(target_id) {
-    return knex('comment').where({target_id}).select('id', 'user_id', 'comment', 'date')
+    return knex('comment')
+      .join('user', 'comment.user_id', '=', 'user.id')
+      .select('comment.id', 'comment.user_id', 'user.username', 'user.avatar_url',
+        'comment.comment', 'comment.date')
+      .where({target_id})
   }
 }
 

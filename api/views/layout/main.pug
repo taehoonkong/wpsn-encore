@@ -24,18 +24,18 @@ html(lang="en")
           if errors
             each error in errors
               .alert.alert-danger
-                div= error
+                div#message= error
 
           - var infos = req.flash('info')
           if infos
             each info in infos
               .alert.alert-info
-                div= info
+                div#message= info
 
           - var successes = req.flash('success')
           if successes
             each success in successes
               .alert.alert-success
-                div= success
+                div#message= success
 
         .bottom.col-md-4

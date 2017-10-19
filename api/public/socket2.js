@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', e => {
   socket.on('test', data => {
     const divListEl = document.querySelector('.alert')
     const message = data.message
-    divListEl.removeChild()
+    //divListEl.removeChild()
     const divEl = appendText(divListEl, message)
     console.log(data)
   })

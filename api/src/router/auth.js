@@ -285,6 +285,7 @@ module.exports = function(io) {
         const {email} = user
         query.resetUserEmail({email, password})
           .then(user => {
+            /*
             sgMail.setApiKey(process.env.SENDGRID_API_KEY)
             const msg = {
               to: user.email,
@@ -297,7 +298,11 @@ module.exports = function(io) {
               req.io.sockets.emit('test', {message});
               req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
               res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
-            })
+            })*/
+            const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
+            req.io.sockets.emit('test', {message});
+            req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
+            res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
           })
       })
   })

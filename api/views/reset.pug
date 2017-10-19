@@ -1,9 +1,12 @@
 extends layout/main.pug
 
+block append head
+  script(src='/socket.js')
+
 block body
   br
 
-  form(method='POST')
+  form#reset-form(method='POST')
     input(type='hidden' name='_csrf' value=csrfToken)
     legend 비밀번호 변경
     .form-group

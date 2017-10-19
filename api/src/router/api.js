@@ -156,7 +156,7 @@ router.get('/music/:keyword', (req, res) => {
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -183,7 +183,7 @@ router.get('/artist/:keyword', (req, res) => {
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/album/:keyword', (req, res) => {
    const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -213,7 +213,7 @@ router.get('/artist/album/:keyword', (req, res) => {
 // keyword에 album name을 넣어주어야 한다.
 router.get('/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -268,7 +268,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
 // keyword에 track name을 넣어주어야 한다.
 router.get('/track/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data

@@ -32,6 +32,15 @@ router.get('/user', (req, res) => {
     })
 })
 
+router.get('/user/:id', (req, res) => {
+  query.getUserById(req.params.id)
+    .then(user => {
+      res.send({
+        user
+      })
+    })
+})
+
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
   query.getWholePost()

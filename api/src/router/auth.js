@@ -249,7 +249,10 @@ module.exports = function(io) {
                   to: user.email,
                   from: 'admin@encore.com',
                   subject: 'Encore Password Reset',
-                  html: `<a href="http://yahoo.com" target="_self">test</a>`
+                  text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                        'http://' + req.headers.host + '/auth/reset/' + token + '\n\n' +
+                        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 }
                 sgMail.send(msg, (err) => {
                   req.flash('info', '비밀번호 재설정 이메일이 ' + user.email + ' (으)로 전송되었습니다.')

@@ -141,7 +141,7 @@ module.exports = {
   getPostByUserId(user_id) {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
-      .select('post.id', 'post.user_id' ,'user.username', 'user.avatar_url',
+      .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
@@ -151,11 +151,13 @@ module.exports = {
   getPostById(post_id) {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
+      .join('comment', 'post.id', '=', 'comment.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
+      .count('comment.comment as comment_count')
       .where('post.id', post_id).first()
   },
   updatePostById(id, {article}) {
@@ -219,7 +221,12 @@ module.exports = {
     return knex('comment').where({id}).delete()
   },
   getCommentByPostId(target_id) {
-    return knex('comment').where({target_id}).select('id', 'user_id', 'comment', 'date')
+    return knex('comment')
+      .join('user', 'comment.user_id', '=', 'user.id')
+      .select('comment.id', 'comment.user_id', 'user.username', 'user.avatar_url',
+        'comment.comment', 'comment.date')
+      .where({target_id})
+      .orderBy('comment.date', 'desc')
   }
 }
 

@@ -3,22 +3,18 @@ const expressJwt = require('express-jwt')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const axios = require('axios')
-
 const query = require('../query')
-
 const router = express.Router()
 
-router.use((req, res, next) => {
-  next()
-})
-
-router.use(bodyParser.json())
-router.use(expressJwt({
-  secret: process.env.JWT_SECRET
-}))
 router.use(cors({
   origin: process.env.TARGET_ORIGIN
 }))
+
+router.use(expressJwt({
+  secret: process.env.JWT_SECRET
+}))
+
+router.use(bodyParser.json())
 
 router.get('/user', (req, res) => {
   query.getUserById(req.user.id)
@@ -28,6 +24,15 @@ router.get('/user', (req, res) => {
         email: user.email,
         username: user.username,
         avatar: user.avatar_url
+      })
+    })
+})
+
+router.get('/user/:id', (req, res) => {
+  query.getUserById(req.params.id)
+    .then(user => {
+      res.send({
+        user
       })
     })
 })
@@ -78,7 +83,7 @@ router.get('/post/:id/comment', (req, res) => {
 router.post('/post', (req, res) => {
   const user_id = req.user.id
   const {
-    picture_small, picture_big, preview, article,
+  picture_small, picture_big, preview, article,
     album, track, artist, geo_x, geo_y, address, like_count } = req.body
   query.createPost({
     user_id, picture_small, picture_big, preview, article,
@@ -163,7 +168,7 @@ router.get('/music/:keyword', (req, res) => {
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/artist/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -190,7 +195,7 @@ router.get('/artist/:keyword', (req, res) => {
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/album/:keyword', (req, res) => {
    const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -220,7 +225,7 @@ router.get('/artist/album/:keyword', (req, res) => {
 // keyword에 album name을 넣어주어야 한다.
 router.get('/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/album/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -252,6 +257,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
     .then(result => {
       let return_result = []
       const data = result.data
+      const album_artist = data.artist.name
       const album_cover_sm = data.cover
       const album_cover_lg = data.cover_big
       const release_date = data.release_date
@@ -261,6 +267,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
           track_artist: data.tracks.data[i].artist.name,
           track_name: data.tracks.data[i].title,
           track_mp3_url: data.tracks.data[i].preview,
+          album_artist,
           album_cover_sm,
           album_cover_lg,
           release_date,
@@ -275,7 +282,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
 // keyword에 track name을 넣어주어야 한다.
 router.get('/track/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
-  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=100&q=${keyword}`)
+  axios.get(`https://api.deezer.com/search/track/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []
       const {data} = result.data
@@ -300,6 +307,5 @@ router.get('/track/:keyword', (req, res) => {
       res.send(return_result)
     })
 })
-
 
 module.exports = router

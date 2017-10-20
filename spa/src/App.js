@@ -43,7 +43,19 @@ export default class App extends Component {
 
   updateMusicInfo = () => {
     console.log('token :', this.state.token)
-    axios.get(`${API_URL}/api/music/artist/zedd`, {
+    axios.get(`${API_URL}/api/artist/zedd`, {
+      headers: {
+        Authorization: `Bearer ${this.state.token}`
+      }
+    })
+      .then(res => {
+        console.log(res.data)
+      })
+  }
+
+  postPost = () => {
+    console.log('token :', this.state.token)
+    axios.post(`${API_URL}/api/post`, null, {
       headers: {
         Authorization: `Bearer ${this.state.token}`
       }

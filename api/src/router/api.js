@@ -50,11 +50,20 @@ router.get('/user/:id/post', (req, res) => {
 })
 
 // 게시물 & 코멘트 가져오기
+// router.get('/post/:id', (req, res) => {
+//   query.getPostById(req.params.id).then(post => {
+//     query.getCommentByPostId(req.params.id).then(comment => {
+//       res.send({post, comment})
+//     })
+//   })
+// })
 router.get('/post/:id', (req, res) => {
-  query.getPostById(req.params.id).then(post => {
-    query.getCommentByPostId(req.params.id).then(comment => {
-      res.send({post, comment})
-    })
+  const post = query.getPostById(req.params.id)
+  const comment = query.getCommentByPostId(req.params.id)
+  Promise.all([post, comment]).then(data => {
+    res.send(data)
+  }, reject => {
+    console.log('reject')
   })
 })
 
@@ -100,9 +109,7 @@ router.patch('/post/:id', (req, res) => {
 
 // 게시물 삭제
 router.delete('/post/:id', (req, res) => {
-  query.getPostById(req.params.id).then((post) => {
-    query.detelePostById(post.id).then(() => res.end())
-  })
+  query.detelePostById(req.params.id).then(() => res.end())
   //.catch(next)
 })
 
@@ -152,7 +159,7 @@ router.get('/music/:keyword', (req, res) => {
     })
 })
 
-// artist 검색 
+// artist 검색
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
@@ -179,7 +186,7 @@ router.get('/artist/:keyword', (req, res) => {
     })
 })
 
-// artist 검색 후 해당 artist가 발매한 음반을 검색 
+// artist 검색 후 해당 artist가 발매한 음반을 검색
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/album/:keyword', (req, res) => {
    const keyword = req.params.keyword.toLowerCase()
@@ -209,7 +216,7 @@ router.get('/artist/album/:keyword', (req, res) => {
     })
 })
 
-// album 검색 
+// album 검색
 // keyword에 album name을 넣어주어야 한다.
 router.get('/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()

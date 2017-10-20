@@ -164,9 +164,34 @@ module.exports = {
   detelePostById(id) {
     return knex('post').where({id}).delete()
   },
-  getLikedByUserId(id) {
-    return knex('like').where({id})
+  getLikedByUserId(user_id) {
+    return knex('like')
+      .join('post', 'like.target_id', '=', 'post.id')
+      .join('user', 'post.user_id', '=', 'user.id')
+      .where('like.user_id', user_id)
+      .select(
+        'post.id AS post_id',
+        'post.user_id AS post_user_id',
+        'user.username',
+        'user.avatar_url',
+        'post.picture_small',
+        'post.picture_big',
+        'post.preview',
+        'post.article',
+        'post.album',
+        'post.track',
+        'post.artist',
+        'post.geo_x',
+        'post.geo_y',
+        'post.address',
+        'post.like_count',
+        'post.date'
+      )
+      .orderBy('post.date', 'desc')
   },
+  // getLikedByUserId(user_id) {
+  //   return knex('like').where({user_id})
+  // },
   createLikeById({user_id, target_id}) {
     return knex('like').insert({
       user_id, target_id

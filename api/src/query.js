@@ -131,21 +131,25 @@ module.exports = {
   getWholePost() {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
+      .join('comment', 'post.id', '=', 'comment.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
+      .count('comment.comment as comment_count')
       .orderBy('post.date', 'desc')
   },
   getPostByUserId(user_id) {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
-      .select('post.id', 'post.user_id' ,'user.username', 'user.avatar_url',
+      .join('comment', 'post.id', '=', 'comment.target_id')
+      .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
+      .count('comment.comment as comment_count')
       .where({user_id}).orderBy('date', 'desc')
   },
   getPostById(post_id) {

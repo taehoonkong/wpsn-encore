@@ -3,42 +3,18 @@ const expressJwt = require('express-jwt')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const axios = require('axios')
-
 const query = require('../query')
-
 const router = express.Router()
 
 router.use(cors({
   origin: process.env.TARGET_ORIGIN
 }))
 
-router.options('*', cors({
-  origin: process.env.TARGET_ORIGIN
-}))
-router.use(bodyParser.json())
-
-/*
 router.use(expressJwt({
   secret: process.env.JWT_SECRET
 }))
-*/
 
-router.use(expressJwt({
-  secret: process.env.JWT_SECRET,
-  credentialsRequired: true,
-  getToken: function fromHeaderOrQuerystring (req) {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        return req.headers.authorization.split(' ')[1];
-    } else if (req.query && req.query.token) {
-      return req.query.token;
-    }
-    return null;
-  }
-}))
-
-router.use((req, res, next) => {
-  next()
-})
+router.use(bodyParser.json())
 
 router.get('/user', (req, res) => {
   query.getUserById(req.user.id)

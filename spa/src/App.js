@@ -25,7 +25,6 @@ export default class App extends Component {
     })
     this.updateUserInfo()
     this.updateMusicInfo()
-    this.postPost()
   }
 
   updateUserInfo = () => {
@@ -78,7 +77,6 @@ export default class App extends Component {
     if (this.state.token) {
       this.updateUserInfo()
       this.updateMusicInfo()
-      this.postPost()
     }
   }
 

@@ -226,7 +226,7 @@ module.exports = {
       .select('comment.id', 'comment.user_id', 'user.username', 'user.avatar_url',
         'comment.comment', 'comment.date')
       .where({target_id})
-      .orderBy('comment.date', 'desc')
+      .orderBy('comment.date')
   }
 }
 

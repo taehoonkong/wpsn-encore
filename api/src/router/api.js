@@ -130,6 +130,11 @@ router.post('/post/:id/comment', (req, res) => {
     })
 })
 
+// 코멘트 삭제
+router.delete('/post/:id/comment', (req, res) => {
+  query.deleteCommentById(req.params.id).then(() => res.end())
+})
+
 // 특정 유저가 좋아요한 게시물
 router.get('/user/:id/liked', (req, res) => {
   query.getLikedByUserId(req.params.id).then(post => {

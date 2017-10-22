@@ -23,17 +23,26 @@ router.get('/user', (req, res) => {
         id: req.user.id,
         email: user.email,
         username: user.username,
-        avatar: user.avatar_url
+        avatar: user.avatar_url,
+        status: user.status_message
       })
+    })
+})
+
+router.patch('/user', (req, res) => {
+  const id = req.user.id
+  const username = req.body.username
+  const status_message = req.body.status_message
+  query.updateUserById({id, username, status_message})
+    .then(user => {
+      res.send({user})
     })
 })
 
 router.get('/user/:id', (req, res) => {
   query.getUserById(req.params.id)
     .then(user => {
-      res.send({
-        user
-      })
+      res.send({user})
     })
 })
 

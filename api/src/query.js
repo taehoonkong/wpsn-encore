@@ -85,6 +85,20 @@ module.exports = {
       .where({id})
       .first()
   },
+  updateUserById({id, username, status_message}) {
+    return knex('user')
+      .where({id})
+      .update({
+        username,
+        status_message
+      })
+      .then(() => {
+        return knex('user')
+          .select('id', 'email', 'username', 'avatar_url', 'status_message')
+          .where({id})
+          .first()
+      })
+  },
   resetEmailToken({email, resetPasswordToken, resetPasswordExpires}) {
     return knex('user')
       .where({email})

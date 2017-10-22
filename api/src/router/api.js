@@ -130,6 +130,16 @@ router.post('/post/:id/comment', (req, res) => {
     })
 })
 
+// 코멘트 수정
+router.patch('/post/:id/comment', (req, res) => {
+  const id = req.params.id
+  const comment = req.body.comment
+  query.updateCommentById({id, comment})
+    .then((comment)=> {
+      res.send(comment)
+    })
+})
+
 // 코멘트 삭제
 router.delete('/post/:id/comment', (req, res) => {
   query.deleteCommentById(req.params.id).then(() => res.end())

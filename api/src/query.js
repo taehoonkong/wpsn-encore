@@ -224,6 +224,15 @@ module.exports = {
         .first()
     })
   },
+  updateCommentById({id, comment}) {
+    return knex('comment')
+      .update({comment}).where({id})
+      .then(() => {
+        return knex('comment')
+          .where({id})
+          .first()
+      })
+  },
   deleteCommentById(id) {
     return knex('comment').where({id}).delete()
   },

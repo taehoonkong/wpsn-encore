@@ -186,14 +186,30 @@ router.get('/user/:id/liked', (req, res) => {
   })
 })
 
+
 // 좋아요 등록
 router.post('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
   query.createLikeById({user_id, target_id})
-    .then(post => {
-      res.status(201)
-      res.send(post)
+    .then(() => {
+      const post = query.getWholePost()
+      const comment = query.getWholeComment()
+      const liked = query.getLikedInfoByUserId(user_id)
+      Promise.all([post, comment, liked]).then(data => {
+        if(data[2]) {
+          data[2].forEach(dataLike => {
+            data[0].forEach(dataPost => {
+              if(dataLike.target_id === dataPost.id) {
+                dataPost.likedState = true
+              } 
+            })
+          })
+        }
+        res.send(data)
+      }, reject => {
+        console.log('reject')
+      }) 
     })
 })
 
@@ -201,7 +217,26 @@ router.post('/post/:id/like', (req, res) => {
 router.delete('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
-  query.deleteLikeById({user_id, target_id}).then(() => res.end())
+  query.deleteLikeById({user_id, target_id})
+    .then(() => {
+      const post = query.getWholePost()
+      const comment = query.getWholeComment()
+      const liked = query.getLikedInfoByUserId(req.user.id)
+      Promise.all([post, comment, liked]).then(data => {
+        if(data[2]) {
+          data[2].forEach(dataLike => {
+            data[0].forEach(dataPost => {
+              if(dataLike.target_id === dataPost.id) {
+                dataPost.likedState = true
+              } 
+            })
+          })
+        }
+        res.send(data)
+      }, reject => {
+        console.log('reject')
+      }) 
+    })
 })
 
 // Get Music Info

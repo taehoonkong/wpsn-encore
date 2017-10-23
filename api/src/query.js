@@ -219,12 +219,7 @@ module.exports = {
     return knex('like').where({user_id, target_id}).select('target_id').first()
   },
   createLikeById({user_id, target_id}) {
-    return knex('like').insert({
-      user_id, target_id
-    })
-    .then(() => {
-      return this.getPostById(target_id)
-    })
+    return knex('like').insert({user_id, target_id})
   },
   deleteLikeById({user_id, target_id}) {
     return knex('like').where({user_id, target_id}).delete()

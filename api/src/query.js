@@ -184,7 +184,7 @@ module.exports = {
   updatePostById(id, {article}) {
     return knex('post').where({id}).update({article})
   },
-  detelePostById(id) {
+  deletePostById(id) {
     return knex('post').where({id}).delete()
   },
   getLikedByUserId(user_id) {

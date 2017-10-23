@@ -128,7 +128,7 @@ router.patch('/post/:id', (req, res) => {
 
 // 게시물 삭제
 router.delete('/post/:id', (req, res) => {
-  query.detelePostById(req.params.id).then(() => res.end())
+  query.deletePostById(req.params.id).then(() => res.end())
   //.catch(next)
 })
 

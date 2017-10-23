@@ -52,6 +52,15 @@ router.get('/post', (req, res) => {
   const comment = query.getWholeComment()
   const liked = query.getLikedInfoByUserId(req.user.id)
   Promise.all([post, comment, liked]).then(data => {
+    if(data[2]) {
+      data[2].forEach(dataLike => {
+        data[0].forEach(dataPost => {
+          if(dataLike.target_id === dataPost.id) {
+            dataPost.likedState = true
+          }
+        })
+      })
+    }
     res.send(data)
   }, reject => {
     console.log('reject')
@@ -98,7 +107,7 @@ router.get('/post/:id/comment', (req, res) => {
 router.post('/post', (req, res) => {
   const user_id = req.user.id
   const {
-  picture_small, picture_big, preview, article,
+    picture_small, picture_big, preview, article,
     album, track, artist, geo_x, geo_y, address, like_count } = req.body
   query.createPost({
     user_id, picture_small, picture_big, preview, article,
@@ -224,7 +233,7 @@ router.get('/artist/:keyword', (req, res) => {
 // artist 검색 후 해당 artist가 발매한 음반을 검색
 // keyword에 artist name을 넣어주어야 한다.
 router.get('/artist/album/:keyword', (req, res) => {
-   const keyword = req.params.keyword.toLowerCase()
+  const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=50&q=${keyword}`)
     .then(result => {
       let return_result = []

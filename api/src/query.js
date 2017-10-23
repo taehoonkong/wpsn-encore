@@ -222,10 +222,8 @@ module.exports = {
     return knex('like').insert({
       user_id, target_id
     })
-    .then(([id]) => {
-      return knex('post')
-        .where({id})
-        .first()
+    .then(() => {
+      return this.getPostById(target_id)
     })
   },
   deleteLikeById(user_id, target_id) {

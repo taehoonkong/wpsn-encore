@@ -57,7 +57,7 @@ router.get('/post', (req, res) => {
         data[0].forEach(dataPost => {
           if(dataLike.target_id === dataPost.id) {
             dataPost.likedState = true
-          }
+          } 
         })
       })
     }
@@ -72,7 +72,17 @@ router.get('/user/:id/post', (req, res) => {
   const user_id = req.params.id
   const post = query.getPostByUserId(user_id)
   const comment = query.getCommentByUserId(user_id)
-  Promise.all([post, comment]).then(data => {
+  const liked = query.getLikedInfoByUserId(req.user.id)
+  Promise.all([post, comment, liked]).then(data => {
+    if(data[2]) {
+      data[2].forEach(dataLike => {
+        data[0].forEach(dataPost => {
+          if(dataLike.target_id === dataPost.id) {
+            dataPost.likedState = true
+          }
+        })
+      })
+    }
     res.send(data)
   }, reject => {
     console.log('reject')
@@ -181,7 +191,7 @@ router.post('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
   query.createLikeById({user_id, target_id})
-    .then((post) => {
+    .then(post => {
       res.status(201)
       res.send(post)
     })

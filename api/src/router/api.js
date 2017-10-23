@@ -210,7 +210,8 @@ router.post('/post/:id/like', (req, res) => {
       // }, reject => {
       //   console.log('reject')
       /* })  */
-      console.log('liked')
+      //console.log('liked')
+      res.end()
     })
 })
 
@@ -237,7 +238,8 @@ router.delete('/post/:id/like', (req, res) => {
       // }, reject => {
       //   console.log('reject')
       /* })  */
-      console.log('unliked')
+      //console.log('unliked')
+      res.end()
     })
 })
 

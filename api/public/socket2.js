@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', e => {
     divListEl.removeChild(document.querySelector('#message'))
     const divEl = appendText(divListEl, message)
   })
+  
+  socket.on('close_auth', data => {
+    const divListEl = document.querySelector('.alert')
+    divListEl.removeChild(document.querySelector('#message'))
+  })
 
   // (user connected) 새 사용자가 접속한 사실을 출력
   socket.on('browser connected', data => {
@@ -26,6 +31,7 @@ document.addEventListener('DOMContentLoaded', e => {
 function appendText(divListEl, text) {
   const divEl = document.createElement('div')
   divEl.textContent = text
+  divEl.setAttribute('id', 'message')
   divListEl.classList.remove('alert-info')
   divListEl.classList.add('alert-success')
   divListEl.insertBefore(divEl, divListEl.firstChild)

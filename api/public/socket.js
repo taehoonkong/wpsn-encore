@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', e => {
 
   socket.on('reset_success', data => {
   	window.close()
-  	window.opener.close()
   })
 
   // formEl.addEventListener('submit', e => {

@@ -129,6 +129,8 @@ module.exports = function(io) {
   // If login success
   router.get('/success', mw.loginRequired, (req, res) => {
     const token = jwt.sign({id: req.user.id}, process.env.JWT_SECRET)
+    const message = 'close auth page'
+    req.io.sockets.emit('close_auth', {message})
     res.render('success.pug', {
       token,
       origin: process.env.TARGET_ORIGIN
@@ -300,7 +302,7 @@ module.exports = function(io) {
               res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
             })*/
             const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
-            req.io.sockets.emit('reset_success', {message});
+            req.io.sockets.emit('reset_success', {message})
             req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
             res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
           })

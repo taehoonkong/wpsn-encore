@@ -48,29 +48,28 @@ router.get('/user/:id', (req, res) => {
 
 // 전체 게시물 가져오기
 router.get('/post', (req, res) => {
-  query.getWholePost()
-    .then(post => {
-      res.send(post)
-    })
+  const post = query.getWholePost()
+  const comment = query.getWholeComment()
+  Promise.all([post, comment]).then(data => {
+    res.send(data)
+  }, reject => {
+    console.log('reject')
+  }) 
 })
 
 // 특정 사용자가 작성한 게시물 전체 가져오기
 router.get('/user/:id/post', (req, res) => {
   const user_id = req.params.id
-  query.getPostByUserId(user_id)
-    .then(post => {
-      res.send(post)
-    })
+  const post = query.getPostByUserId(user_id)
+  const comment = query.getCommentByUserId(user_id)
+  Promise.all([post, comment]).then(data => {
+    res.send(data)
+  }, reject => {
+    console.log('reject')
+  })
 })
 
 // 게시물 & 코멘트 가져오기
-// router.get('/post/:id', (req, res) => {
-//   query.getPostById(req.params.id).then(post => {
-//     query.getCommentByPostId(req.params.id).then(comment => {
-//       res.send({post, comment})
-//     })
-//   })
-// })
 router.get('/post/:id', (req, res) => {
   const post = query.getPostById(req.params.id)
   const comment = query.getCommentByPostId(req.params.id)

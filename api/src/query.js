@@ -250,10 +250,31 @@ module.exports = {
   deleteCommentById(id) {
     return knex('comment').where({id}).delete()
   },
+  getWholeComment() {
+    return knex('comment')
+      .join('user', 'comment.user_id', '=', 'user.id')
+      .select('comment.id', 'comment.target_id',
+        'comment.user_id','comment.target_id', 'user.username', 'user.avatar_url',
+        'comment.comment', 'comment.date')
+      .orderBy('comment.target_id')
+      .orderBy('comment.date')
+  },
+  getCommentByUserId(user_id) {
+    return knex('comment')
+      .join('user', 'comment.user_id', '=', 'user.id')
+      .join('post', 'post.id', '=', 'comment.target_id')
+      .select('comment.id', 'comment.target_id',
+        'comment.user_id', 'user.username', 'user.avatar_url',
+        'comment.comment', 'comment.date')
+      .where('post.user_id', user_id)
+      .orderBy('comment.target_id')
+      .orderBy('comment.date')
+  },
   getCommentByPostId(target_id) {
     return knex('comment')
       .join('user', 'comment.user_id', '=', 'user.id')
-      .select('comment.id', 'comment.user_id', 'user.username', 'user.avatar_url',
+      .select('comment.id', 'comment.target_id',
+        'comment.user_id', 'user.username', 'user.avatar_url',
         'comment.comment', 'comment.date')
       .where({target_id})
       .orderBy('comment.date')

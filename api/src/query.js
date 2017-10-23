@@ -191,9 +191,12 @@ module.exports = {
       )
       .orderBy('post.date', 'desc')
   },
-  // getLikedByUserId(user_id) {
-  //   return knex('like').where({user_id})
-  // },
+  getLikedInfoByUserId(user_id) {
+    return knex('like').where({user_id}).select('target_id').orderBy('id', 'desc')
+  },
+  getLikedState(user_id, target_id) {
+    return knex('like').where({user_id, target_id}).select('target_id').first()
+  },
   createLikeById({user_id, target_id}) {
     return knex('like').insert({
       user_id, target_id

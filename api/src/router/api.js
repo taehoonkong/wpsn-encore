@@ -6,13 +6,13 @@ const axios = require('axios')
 const query = require('../query')
 const router = express.Router()
 
-router.use(cors({
-  origin: process.env.TARGET_ORIGIN
-}))
+// router.use(cors({
+//   origin: process.env.TARGET_ORIGIN
+// }))
 
-router.use(expressJwt({
-  secret: process.env.JWT_SECRET
-}))
+// router.use(expressJwt({
+//   secret: process.env.JWT_SECRET
+// }))
 
 router.use(bodyParser.json())
 
@@ -63,12 +63,18 @@ router.get('/user/:id/post', (req, res) => {
 //   })
 // })
 router.get('/post/:id', (req, res) => {
-  const post = query.getPostById(req.params.id)
-  const comment = query.getCommentByPostId(req.params.id)
-  Promise.all([post, comment]).then(data => {
+  const user_id = 1//req.user.id
+  const post_id = req.params.id
+  const post = query.getPostById(post_id)
+  const comment = query.getCommentByPostId(post_id)
+  const liked = query.getLikedState(user_id, post_id)
+  Promise.all([post, comment, liked]).then(data => {
+    if (data[2] != null) {
+      data[0].likedState = true
+    }
     res.send(data)
-  }, reject => {
-    console.log('reject')
+  }, (reject) => {
+    console.log(reject)
   })
 })
 

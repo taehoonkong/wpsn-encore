@@ -85,6 +85,20 @@ module.exports = {
       .where({id})
       .first()
   },
+  updateUserById({id, username, status_message}) {
+    return knex('user')
+      .where({id})
+      .update({
+        username,
+        status_message
+      })
+      .then(() => {
+        return knex('user')
+          .select('id', 'email', 'username', 'avatar_url', 'status_message')
+          .where({id})
+          .first()
+      })
+  },
   resetEmailToken({email, resetPasswordToken, resetPasswordExpires}) {
     return knex('user')
       .where({email})
@@ -131,22 +145,29 @@ module.exports = {
   getWholePost() {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
+      .leftJoin('comment', 'post.id', '=', 'comment.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
+      .count('comment.comment as comment_count')
+      .groupBy('post.id')
       .orderBy('post.date', 'desc')
   },
   getPostByUserId(user_id) {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
+      .leftJoin('comment', 'post.id', '=', 'comment.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
         'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
         'post.like_count', 'post.date'
       )
-      .where({user_id}).orderBy('date', 'desc')
+      .count('comment.comment as comment_count')
+      .where('post.user_id', user_id)
+      .groupBy('post.id')
+      .orderBy('post.date', 'desc')
   },
   getPostById(post_id) {
     return knex('post')
@@ -220,6 +241,15 @@ module.exports = {
         .first()
     })
   },
+  updateCommentById({id, comment}) {
+    return knex('comment')
+      .update({comment}).where({id})
+      .then(() => {
+        return knex('comment')
+          .where({id})
+          .first()
+      })
+  },
   deleteCommentById(id) {
     return knex('comment').where({id}).delete()
   },
@@ -229,7 +259,7 @@ module.exports = {
       .select('comment.id', 'comment.user_id', 'user.username', 'user.avatar_url',
         'comment.comment', 'comment.date')
       .where({target_id})
-      .orderBy('comment.date', 'desc')
+      .orderBy('comment.date')
   }
 }
 

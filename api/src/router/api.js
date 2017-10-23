@@ -23,17 +23,26 @@ router.get('/user', (req, res) => {
         id: req.user.id,
         email: user.email,
         username: user.username,
-        avatar: user.avatar_url
+        avatar: user.avatar_url,
+        status: user.status_message
       })
+    })
+})
+
+router.patch('/user', (req, res) => {
+  const id = req.user.id
+  const username = req.body.username
+  const status_message = req.body.status_message
+  query.updateUserById({id, username, status_message})
+    .then(user => {
+      res.send({user})
     })
 })
 
 router.get('/user/:id', (req, res) => {
   query.getUserById(req.params.id)
     .then(user => {
-      res.send({
-        user
-      })
+      res.send({user})
     })
 })
 
@@ -136,6 +145,21 @@ router.post('/post/:id/comment', (req, res) => {
     })
 })
 
+// 코멘트 수정
+router.patch('/post/:id/comment', (req, res) => {
+  const id = req.params.id
+  const comment = req.body.comment
+  query.updateCommentById({id, comment})
+    .then((comment)=> {
+      res.send(comment)
+    })
+})
+
+// 코멘트 삭제
+router.delete('/post/:id/comment', (req, res) => {
+  query.deleteCommentById(req.params.id).then(() => res.end())
+})
+
 // 특정 유저가 좋아요한 게시물
 router.get('/user/:id/liked', (req, res) => {
   query.getLikedByUserId(req.params.id).then(post => {
@@ -187,7 +211,7 @@ router.get('/artist/:keyword', (req, res) => {
             artist_id: data[i].id,
             artist_name: data[i].name,
             artist_picture_sm: data[i].picture_small,
-            artist_picture_lg: data[i].picture_big,
+            artist_picture_lg: data[i].picture_xl,
             aritst_top_track: data[i].tracklist,
             type: data[i].type
           })
@@ -218,7 +242,7 @@ router.get('/artist/album/:keyword', (req, res) => {
             album_picture_lg: data[i].cover_big,
             album_tracklist: data[i].tracklist,
             artist_picture_sm: data[i].artist.picture,
-            artist_picture_lg: data[i].artist.picture_big,
+            artist_picture_lg: data[i].artist.picture_xl,
             type: data[i].type
           })
         }
@@ -245,7 +269,7 @@ router.get('/album/:keyword', (req, res) => {
             album_artist: data[i].artist.name,
             album_title: data[i].title,
             album_picture_sm: data[i].cover,
-            album_picture_lg: data[i].cover_big,
+            album_picture_lg: data[i].cover_xl,
             album_tracklist: data[i].tracklist,
             type: data[i].type
           })
@@ -265,7 +289,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
       const data = result.data
       const album_artist = data.artist.name
       const album_cover_sm = data.cover
-      const album_cover_lg = data.cover_big
+      const album_cover_lg = data.cover_xl
       const release_date = data.release_date
       for(let i = 0; i < data.tracks.data.length; i++) {
         return_result.push({
@@ -303,7 +327,7 @@ router.get('/track/:keyword', (req, res) => {
             track_name: data[i].title,
             track_mp3_url: data[i].preview,
             track_picture_sm: data[i].album.cover,
-            track_picture_lg: data[i].album.cover_big,
+            track_picture_lg: data[i].album.cover_xl,
             album_id: data[i].album.id,
             album_title: data[i].album.title,
             type: data[i].type

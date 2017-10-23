@@ -50,7 +50,8 @@ router.get('/user/:id', (req, res) => {
 router.get('/post', (req, res) => {
   const post = query.getWholePost()
   const comment = query.getWholeComment()
-  Promise.all([post, comment]).then(data => {
+  const liked = query.getLikedInfoByUserId(req.user.id)
+  Promise.all([post, comment, liked]).then(data => {
     res.send(data)
   }, reject => {
     console.log('reject')

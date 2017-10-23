@@ -226,8 +226,8 @@ module.exports = {
       return this.getPostById(target_id)
     })
   },
-  deleteLikeById(user_id, target_id) {
-    return knex('like').where(user_id, target_id).delete()
+  deleteLikeById({user_id, target_id}) {
+    return knex('like').where({user_id, target_id}).delete()
   },
   createCommentByPostId({user_id, target_id, comment}) {
     return knex('comment').insert({

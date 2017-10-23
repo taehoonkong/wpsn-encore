@@ -201,7 +201,7 @@ router.post('/post/:id/like', (req, res) => {
 router.delete('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
-  query.deleteLikeById(user_id, target_id).then(() => res.end())
+  query.deleteLikeById({user_id, target_id}).then(() => res.end())
 })
 
 // Get Music Info

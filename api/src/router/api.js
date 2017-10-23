@@ -6,13 +6,13 @@ const axios = require('axios')
 const query = require('../query')
 const router = express.Router()
 
-// router.use(cors({
-//   origin: process.env.TARGET_ORIGIN
-// }))
+router.use(cors({
+  origin: process.env.TARGET_ORIGIN
+}))
 
-// router.use(expressJwt({
-//   secret: process.env.JWT_SECRET
-// }))
+router.use(expressJwt({
+  secret: process.env.JWT_SECRET
+}))
 
 router.use(bodyParser.json())
 
@@ -72,7 +72,7 @@ router.get('/user/:id/post', (req, res) => {
 //   })
 // })
 router.get('/post/:id', (req, res) => {
-  const user_id = 1//req.user.id
+  const user_id = req.user.id
   const post_id = req.params.id
   const post = query.getPostById(post_id)
   const comment = query.getCommentByPostId(post_id)

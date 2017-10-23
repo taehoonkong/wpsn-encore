@@ -71,12 +71,18 @@ router.get('/user/:id/post', (req, res) => {
 
 // 게시물 & 코멘트 가져오기
 router.get('/post/:id', (req, res) => {
-  const post = query.getPostById(req.params.id)
-  const comment = query.getCommentByPostId(req.params.id)
-  Promise.all([post, comment]).then(data => {
+  const user_id = req.user.id
+  const post_id = req.params.id
+  const post = query.getPostById(post_id)
+  const comment = query.getCommentByPostId(post_id)
+  const liked = query.getLikedState(user_id, post_id)
+  Promise.all([post, comment, liked]).then(data => {
+    if (data[2] != null) {
+      data[0].likedState = true
+    }
     res.send(data)
-  }, reject => {
-    console.log('reject')
+  }, (reject) => {
+    console.log(reject)
   })
 })
 

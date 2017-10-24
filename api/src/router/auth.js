@@ -303,44 +303,26 @@ module.exports = function(io) {
             })*/
             const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
             req.io.sockets.emit('reset_success', {message})
-            //req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
-            res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
+            res.end()
           })
       })
-  })
-
-  router.get('/reset/:token/complete', (req, res, next) => {
-    res.render('resetComplete.pug')
   })
 
   io.sockets.on('connection', socket => {
     let roomId;
     const socket_id = socket.id
     console.log(`SOCKET_ID:(${socket_id}) connected`)
-
-    // join 이벤트
-    // 해당 소켓을 room에 연결시킨다.
-    // 클라이언트에 username을 보낸다.
-    // 유저가 접속했다는 사실을 다른 모든 유저에게 전송한다.
     socket.on('join', (data, ack) => {
       roomId = data.id
       socket.join(roomId)
       socket.broadcast.to(roomId).emit('browser connected', {socket_id})
       ack({socket_id})
     })
-
-    // socket.on('reset_now', (data, ack) => {
-    //   const message = data.message
-    //   socket.broadcast.to(roomId).emit('reset_complete', {message})
-    //   ack({ok: true})
-    // })
   })
 
-  // Error Handling
   router.use((err, req, res, next) => {
     req.flash('error', err.message)
     res.redirect(`${req.baseUrl}${err.redirectUrl ? err.redirectUrl : ''}`)
   })
-
   return router
 }

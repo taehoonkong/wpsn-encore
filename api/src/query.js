@@ -252,6 +252,26 @@ module.exports = {
         'comment.comment', 'comment.date')
       .where({target_id})
       .orderBy('comment.date')
+  },
+  createSearchKeyWordByUserId({user_id, keyword, type}) {
+    return knex('search_history')
+      .insert({user_id, keyword, type})
+      .then(([id]) => {
+        return knex('search_history')
+          .where({id})
+          .first()
+      })
+  },
+  getSearchKeyWordByUserId({user_id}) {
+    return knex('search_history')
+      .where({user_id})
+      .orderBy('date', 'desc')
+      .limit(10)
+  },
+  deleteSearchKeyWordById({id}) {
+    return knex('search_history')
+      .where({id})
+      .delete()
   }
 }
 

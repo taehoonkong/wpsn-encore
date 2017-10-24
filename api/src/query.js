@@ -82,6 +82,7 @@ module.exports = {
   },
   getUserById(id) {
     return knex('user')
+      .select('id', 'email', 'username', 'avatar_url', 'status_message')
       .where({id})
       .first()
   },
@@ -186,6 +187,7 @@ module.exports = {
   },
   updatePostById(id, {article}) {
     return knex('post').where({id}).update({article})
+      .then(() => { return knex('post').where({id})})
   },
   deletePostById(id) {
     return knex('post').where({id}).delete()
@@ -212,13 +214,12 @@ module.exports = {
           .first()
       })
   },
-  updateCommentById({id, comment}) {
+  updateCommentById(id, {comment}) {
     return knex('comment')
       .update({comment}).where({id})
       .then(() => {
         return knex('comment')
           .where({id})
-          .first()
       })
   },
   deleteCommentById(id) {
@@ -252,6 +253,11 @@ module.exports = {
         'comment.comment', 'comment.date')
       .where({target_id})
       .orderBy('comment.date')
+  },
+  getCommentById(id) {
+    return knex('comment')
+      .where({id})
+      .first()
   },
   createSearchKeyWordByUserId({user_id, keyword, type}) {
     return knex('search_history')

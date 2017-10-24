@@ -2,6 +2,10 @@
   "name": "wpsn-encore",
   "version": "1.0.0",
   "description": "",
+  "apidoc": {
+    "title": "Encore API",
+    "url" : "http://localhost:3000"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",

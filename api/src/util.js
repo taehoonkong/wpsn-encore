@@ -14,6 +14,18 @@ const createToken = () => {
   })
 }
 
+const authorizeRequest = user_id => result => {
+  if(!result) {
+    throw new NotFoundError('경로를 찾을 수 없습니다.')
+  } else if(!result.id) {
+    throw new NotFoundError('경로를 찾을 수 없습니다.')
+  } else if(result.user_id !== user_id) {
+    throw new ForbiddenError('허가되지 않은 접근입니다.')
+  } else {
+    return
+  }
+}
+
 class userAlreadyExists extends Error {
   constructor(message) {
     super(message)
@@ -44,11 +56,30 @@ class requireField extends Error {
   }
 }
 
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'NotFoundError'
+    this.status = 404
+  }
+}
+
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'ForbiddenError'
+    this.status = 403
+  }
+}
+
 module.exports = {
   flashError,
   createToken,
+  authorizeRequest,
   userAlreadyExists,
   emailNotExists,
   tokenInvalidExpires,
-  requireField
+  requireField,
+  NotFoundError,
+  ForbiddenError
 }

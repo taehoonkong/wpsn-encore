@@ -20,6 +20,7 @@ app.set('trust proxy')
 app.use(express.static(path.join(__dirname, '..', 'public')))
 app.use('/auth', authRouter)
 app.use('/api', apiRouter)
+app.use('/apidoc', express.static(path.join(__dirname, '..', 'doc')));
 
 httpServer.listen(PORT, () => {
   console.log(`listening ${PORT}...`)

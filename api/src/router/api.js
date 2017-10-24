@@ -16,6 +16,7 @@ router.use(expressJwt({
 
 router.use(bodyParser.json())
 
+// 로그인한 사용자정보 전송
 router.get('/user', (req, res) => {
   query.getUserById(req.user.id)
     .then(user => {
@@ -29,6 +30,7 @@ router.get('/user', (req, res) => {
     })
 })
 
+// 사용자 정보 수정(username, status_message)
 router.patch('/user', (req, res) => {
   const id = req.user.id
   const username = req.body.username
@@ -39,6 +41,7 @@ router.patch('/user', (req, res) => {
     })
 })
 
+// 사용자 id를 통해 정보 조회
 router.get('/user/:id', (req, res) => {
   query.getUserById(req.params.id)
     .then(user => {
@@ -89,7 +92,7 @@ router.get('/user/:id/post', (req, res) => {
   })
 })
 
-// 게시물 & 코멘트 가져오기
+// 개별 게시물 & 코멘트 가져오기
 router.get('/post/:id', (req, res) => {
   const user_id = req.user.id
   const post_id = req.params.id
@@ -106,22 +109,15 @@ router.get('/post/:id', (req, res) => {
   })
 })
 
-// 코멘트만 가져오기
-router.get('/post/:id/comment', (req, res) => {
-  query.getCommentByPostId(req.params.id).then(comment => {
-    res.send(comment)
-  })
-})
-
 // 게시물 작성
 router.post('/post', (req, res) => {
   const user_id = req.user.id
   const {
     picture_small, picture_big, preview, article,
-    album, track, artist, geo_x, geo_y, address, like_count } = req.body
+    album, track, artist, geo_x, geo_y, address} = req.body
   query.createPost({
     user_id, picture_small, picture_big, preview, article,
-    album, track, artist, geo_x, geo_y, address, like_count})
+    album, track, artist, geo_x, geo_y, address})
     .then((post) => {
       res.status(201)
       res.send(post)
@@ -186,31 +182,12 @@ router.get('/user/:id/liked', (req, res) => {
   })
 })
 
-
 // 좋아요 등록
 router.post('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
   query.createLikeById({user_id, target_id})
     .then(() => {
-      /* const post = query.getWholePost() */
-      // const comment = query.getWholeComment()
-      // const liked = query.getLikedInfoByUserId(user_id)
-      // Promise.all([post, comment, liked]).then(data => {
-      //   if(data[2]) {
-      //     data[2].forEach(dataLike => {
-      //       data[0].forEach(dataPost => {
-      //         if(dataLike.target_id === dataPost.id) {
-      //           dataPost.likedState = true
-      //         }
-      //       })
-      //     })
-      //   }
-      //   res.send(data)
-      // }, reject => {
-      //   console.log('reject')
-      /* })  */
-      //console.log('liked')
       res.end()
     })
 })
@@ -221,34 +198,7 @@ router.delete('/post/:id/like', (req, res) => {
   const target_id = req.params.id
   query.deleteLikeById({user_id, target_id})
     .then(() => {
-      /* const post = query.getWholePost() */
-      // const comment = query.getWholeComment()
-      // const liked = query.getLikedInfoByUserId(req.user.id)
-      // Promise.all([post, comment, liked]).then(data => {
-      //   if(data[2]) {
-      //     data[2].forEach(dataLike => {
-      //       data[0].forEach(dataPost => {
-      //         if(dataLike.target_id === dataPost.id) {
-      //           dataPost.likedState = true
-      //         }
-      //       })
-      //     })
-      //   }
-      //   res.send(data)
-      // }, reject => {
-      //   console.log('reject')
-      /* })  */
-      //console.log('unliked')
-      res.end()
-    })
-})
-
-// Get Music Info
-router.get('/music/:keyword', (req, res) => {
-  const keyword = req.params.keyword
-  axios.get(`https://api.deezer.com/search?q=${keyword}`)
-    .then(result => {
-      res.send(result.data)
+     res.end()
     })
 })
 

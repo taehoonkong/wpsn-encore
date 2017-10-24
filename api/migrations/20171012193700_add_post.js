@@ -3,7 +3,7 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable('post', t => {
     t.increments()
     t.integer('user_id').unsigned()
-    t.foreign('user_id').references('user.id')
+    t.foreign('user_id').references('user.id').onDelete('CASCADE')
     t.string('picture_small')
     t.string('picture_big')
     t.string('preview')
@@ -11,10 +11,9 @@ exports.up = function(knex, Promise) {
     t.string('track')
     t.string('album')
     t.string('artist')
-    t.string('geo_x')
-    t.string('geo_y')
+    t.integer('geo_x')
+    t.integer('geo_y')
     t.string('address')
-    t.string('like_count')
     t.timestamp('date').defaultTo(knex.fn.now())
   })
 };

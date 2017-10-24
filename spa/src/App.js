@@ -53,18 +53,6 @@ export default class App extends Component {
       })
   }
 
-  postPost = () => {
-    console.log('token :', this.state.token)
-    axios.post(`${API_URL}/api/post`, null, {
-      headers: {
-        Authorization: `Bearer ${this.state.token}`
-      }
-    })
-      .then(res => {
-        console.log(res.data)
-      })
-  }
-
   componentWillMount() {
     if (localStorage.token) {
       this.setState({

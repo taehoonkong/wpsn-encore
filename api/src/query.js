@@ -132,26 +132,27 @@ module.exports = {
           .first()
       })
   },
-  createPost({user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count}) {
+  createPost({user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address}) {
     return knex('post').insert({
-      user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address, like_count
+      user_id, picture_small, picture_big, preview, article, album, track, artist, geo_x, geo_y, address
     })
-    .then(([id]) => {
-      return knex('post')
-        .where({id})
-        .first()
-    })
+      .then(([id]) => {
+        return knex('post')
+          .where({id})
+          .first()
+      })
   },
   getWholePost() {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
       .leftJoin('comment', 'post.id', '=', 'comment.target_id')
+      .leftJoin('like', 'post.id', '=', 'like.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
-        'post.like_count', 'post.date'
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date'
       )
-      .count('comment.comment as comment_count')
+      .countDistinct('comment.comment as comment_count')
+      .countDistinct('like.id as like_count')
       .groupBy('post.id')
       .orderBy('post.date', 'desc')
   },
@@ -159,12 +160,13 @@ module.exports = {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
       .leftJoin('comment', 'post.id', '=', 'comment.target_id')
+      .leftJoin('like', 'post.id', '=', 'like.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
-        'post.like_count', 'post.date'
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date'
       )
-      .count('comment.comment as comment_count')
+      .countDistinct('comment.comment as comment_count')
+      .countDistinct('like.id as like_count')
       .where('post.user_id', user_id)
       .groupBy('post.id')
       .orderBy('post.date', 'desc')
@@ -172,13 +174,14 @@ module.exports = {
   getPostById(post_id) {
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
-      .join('comment', 'post.id', '=', 'comment.target_id')
+      .leftJoin('comment', 'post.id', '=', 'comment.target_id')
+      .leftJoin('like', 'post.id', '=', 'like.target_id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address',
-        'post.like_count', 'post.date'
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date'
       )
-      .count('comment.comment as comment_count')
+      .countDistinct('comment.comment as comment_count')
+      .countDistinct('like.id as like_count')
       .where('post.id', post_id).first()
   },
   updatePostById(id, {article}) {
@@ -187,33 +190,8 @@ module.exports = {
   deletePostById(id) {
     return knex('post').where({id}).delete()
   },
-  getLikedByUserId(user_id) {
-    return knex('like')
-      .join('post', 'like.target_id', '=', 'post.id')
-      .join('user', 'post.user_id', '=', 'user.id')
-      .where('like.user_id', user_id)
-      .select(
-        'post.id AS post_id',
-        'post.user_id AS post_user_id',
-        'user.username',
-        'user.avatar_url',
-        'post.picture_small',
-        'post.picture_big',
-        'post.preview',
-        'post.article',
-        'post.album',
-        'post.track',
-        'post.artist',
-        'post.geo_x',
-        'post.geo_y',
-        'post.address',
-        'post.like_count',
-        'post.date'
-      )
-      .orderBy('post.date', 'desc')
-  },
   getLikedInfoByUserId(user_id) {
-    return knex('like').where({user_id}).select('target_id').orderBy('id', 'desc')
+    return knex('like').where({user_id}).select('target_id').orderBy('target_id', 'desc')
   },
   getLikedState(user_id, target_id) {
     return knex('like').where({user_id, target_id}).select('target_id').first()
@@ -228,11 +206,11 @@ module.exports = {
     return knex('comment').insert({
       user_id, target_id, comment
     })
-    .then(([id]) => {
-      return knex('comment')
-        .where({id})
-        .first()
-    })
+      .then(([id]) => {
+        return knex('comment')
+          .where({id})
+          .first()
+      })
   },
   updateCommentById({id, comment}) {
     return knex('comment')

@@ -3,9 +3,9 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable('comment', t => {
     t.increments()
     t.integer('user_id').unsigned()
-    t.foreign('user_id').references('user.id')
+    t.foreign('user_id').references('user.id').onDelete('CASCADE')
     t.integer('target_id').unsigned()
-    t.foreign('target_id').references('post.id')
+    t.foreign('target_id').references('post.id').onDelete('CASCADE')
     t.string('comment').notNullable()
     t.timestamp('date').defaultTo(knex.fn.now())
   })

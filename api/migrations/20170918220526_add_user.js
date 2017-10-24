@@ -3,7 +3,7 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable('user', t => {
     t.increments()
     t.string('email').unique()
-    t.string('password').notNullable()
+    t.string('password')
     t.string('resetPasswordToken')
     t.string('resetPasswordExpires')
     t.string('facebook_profile_id')

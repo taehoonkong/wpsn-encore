@@ -304,6 +304,11 @@ module.exports = {
       .orderBy('date', 'desc')
       .limit(10)
   },
+  getSearchKeyWordById(id) {
+    return knex('search_history')
+      .where({id})
+      .first()
+  },
   deleteSearchKeyWordById({id}) {
     return knex('search_history')
       .where({id})

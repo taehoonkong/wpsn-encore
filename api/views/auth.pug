@@ -4,44 +4,28 @@ block append head
   script(src='/socket_auth.js')
 
 block body
-  br
+  .Header
+    span.Header_Location Cancel
+    h1.Title Encore - Sign in
 
-  form(method='POST' action='/auth/local')
-    input(type='hidden' name='_csrf' value=csrfToken)
-    legend 로그인
-    div.form-group
-      label(for='email') Email
-      input.form-control(type='text' id='email' placeholder='email' name='email')
-    div.form-group
-      label(for='password') Password
-      input.form-control(type='password' id='password' placeholder='password' name='password')
-    button.btn.btn-primary(type='submit') 로그인
-    a.btn.btn-link(href='/auth/forgot') 비밀번호를 잊어버리셨습니까?
-
-  br
-
-  legend SNS로그인
-  p: a(href='/auth/google') Google로 로그인
-  p: a(href='/auth/facebook') Facebook으로 로그인
-
-  h4 or sign Up?
-  p: a(href='/auth/register') 회원가입
-
-  //- br
-  //-
-  //- form(method='POST' action='/auth/register')
-  //-   input(type='hidden' name='_csrf' value=csrfToken)
-  //-   legend 회원가입
-  //-   div.form-group
-  //-     label(for='email') Email
-  //-     input.form-control(type='text' id='email' placeholder='email' name='email')
-  //-   div.form-group
-  //-     label(for='username') UserName
-  //-     input.form-control(type='text' id='username' placeholder='username' name='username')
-  //-   div.form-group
-  //-     label(for='password') Password
-  //-     input.form-control(type='password' id='password' placeholder='password' name='password')
-  //-   div.form-group
-  //-     label(for='confirm') Confirm Password
-  //-     input.form-control(type='password' id='confirm' placeholder='confirm password' name='confirm')
-    //- button.btn.btn-primary(type='submit') 회원가입
+  .Auth
+    .SNS_Auth
+      ul
+        a(href='/auth/facebook')
+          li 
+            img(src='img/facebook.svg')
+            span Sign in with Facebook
+        a(href='/auth/google')
+          li
+            img(src='img/google.svg')
+            span Sign in with Google
+    .Email_Auth
+      form(method='POST' action='/auth/local')
+        input(type='hidden' name='_csrf' value=csrfToken)
+        input(type='text' placeholder='Email' name='email' autofocus)
+        input(type='password' placeholder='Password' name='password')
+        button(type='submit') Sign in
+    .Forgot_Auth
+      a(href='/auth/forgot') Forgot your password?
+    .Signup_Auth
+      a(href='/auth/register') Sign up 

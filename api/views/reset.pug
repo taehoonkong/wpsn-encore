@@ -4,16 +4,13 @@ block append head
   script(src='/socket_reset.js')
 
 block body
-  br
+  .Header
+    h1.Title Encore - Reser Password
 
-  form#reset-form(method='POST')
-    input(type='hidden' name='_csrf' value=csrfToken)
-    legend 비밀번호 변경
-    .form-group
-      label(for='password') 새로운 비밀번호
-      input.form-control(type='password', name='password', placeholder='New password', autofocus=true)
-    .form-group
-      label(for='confirm') 비밀번호 확인
-      input.form-control(type='password', name='confirm', placeholder='Confirm password')
-    .form-group
-      button.btn.btn-primary(type='submit') 비밀번호 변경
+  .Forgot
+    .Email_Forgot
+      form(method='POST')
+        input(type='hidden' name='_csrf' value=csrfToken)
+        input(type='password', name='password', placeholder='New password', autofocus)
+        input(type='password', name='confirm', placeholder='Confirm password')
+        button(type='submit') Reset your password

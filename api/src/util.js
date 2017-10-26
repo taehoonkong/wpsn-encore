@@ -57,6 +57,22 @@ class requireField extends Error {
   }
 }
 
+class registerRequire extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'registerRequire'
+    this.redirectUrl = '/register'
+  }
+}
+
+class passwordResetRequire extends Error {
+  constructor(message, token) {
+    super(message)
+    this.name = 'passwordResetRequire'
+    this.redirectUrl = `/reset/${token}`
+  }
+}
+
 class NotFoundError extends Error {
   constructor(message) {
     super(message)
@@ -81,6 +97,8 @@ module.exports = {
   emailNotExists,
   tokenInvalidExpires,
   requireField,
+  registerRequire,
+  passwordResetRequire,
   NotFoundError,
   ForbiddenError
 }

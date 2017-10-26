@@ -741,9 +741,16 @@ router.get('/history', (req, res) => {
 })
 
 // 검색 history 삭제
-router.delete('/history/:id', (req, res) => {
+router.delete('/history/:id', (req, res, next) => {
   const id = req.params.id
-  query.deleteSearchKeyWordById({id}).then(() => res.end())
+  const user_id = req.user.id
+  query.getSearchKeyWordById(id)
+    .then(util.authorizeRequest(user_id))
+    .then(() => {
+      query.deleteSearchKeyWordById({id})
+        .then(() => res.end())
+    })
+    .catch(next)
 })
 
 // artist 검색

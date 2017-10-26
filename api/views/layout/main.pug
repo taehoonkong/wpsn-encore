@@ -4,38 +4,32 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
-    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
-    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-    script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
-    title Document
+    //link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+    //script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+    //script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+    title ENCORE Auth
     block head
-      link(rel="stylesheet", href="/main.css")
+      link(rel="stylesheet", href="/style.css")
       script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js" integrity="sha256-KaSi3am04I2b10TZZ7JqEYrnNk94r0QOeIY3PtwGR/M=" crossorigin="anonymous")
   body
     .container
-      .row
-        .top.col-md-4
-        .middle.col-md-4
-          h1 ENCORE
-          block body
-          br
+      block body
+      br
         
-          - var errors = req.flash('error')
-          if errors
-            each error in errors
-              .alert.alert-danger
-                div#message= error
+      - var errors = req.flash('error')
+      if errors
+        each error in errors
+          .alert.alert-danger
+            div#message= error
 
-          - var infos = req.flash('info')
-          if infos
-            each info in infos
-              .alert.alert-info
-                div#message= info
+      - var infos = req.flash('info')
+      if infos
+        each info in infos
+          .alert.alert-info
+            div#message= info
 
-          - var successes = req.flash('success')
-          if successes
-            each success in successes
-              .alert.alert-success
-                div#message= success
-
-        .bottom.col-md-4
+      - var successes = req.flash('success')
+      if successes
+        each success in successes
+          .alert.alert-success
+            div#message= success

@@ -1,0 +1,163 @@
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
+
+/* Reset CSS */
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+h1, h2, h3, p {
+  margin: 0;
+}
+
+/* Common */
+body {
+  background-color: #f8f8f8;
+  font-family: 'Roboto', sans-serif;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+.Container {
+  height: 100%;
+}
+.Header {
+  height: 4rem;
+  border-bottom: 1px solid #efefef;
+  position: relative;
+}
+h1, h3 {
+  color: #3956ff;
+}
+h1 {
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 4rem;
+  font-weight: 600; 
+}
+.Auth, .Register, .Reset, .Forgot {
+  width: 100%;
+  height: calc(100% - 4rem);
+  padding: 1.5rem 0;
+}
+h3 {
+  font-size: 1rem;
+  font-weight: 400;
+}
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+li {
+  padding: 2rem 1.5rem;
+  margin: 0.2rem;
+  background-color: white;
+  border-top: 1px solid #efefef;
+  border-bottom: 1px solid #efefef;
+  color: #999;
+  font-weight: 300;
+  line-height: 3rem;
+}
+li a {
+  color: #999;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  border: 0;
+  font-size: 1rem;
+  font-weight: 300;
+  padding: 1.5rem;
+  margin: 0.2rem;
+  border-top: 1px solid #efefef;
+  border-bottom: 1px solid #efefef;
+  color: #777;
+}
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+  color: #999;
+}
+img {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid #efefef;
+  border-radius: 1.5rem;
+  float: left;
+  display: inline-block;
+  margin-right: 1.5rem;
+}
+.Email_Auth {
+  margin-top: 1rem;
+  width: 100%;
+}
+button {
+  width: 90%;
+  margin-top: 1.5rem;
+  margin-left: 5%;
+  padding: 1rem 0;
+  background-color: #3956ff;
+  border: 0;
+  font-size: 1rem;
+  font-weight: 300;
+  color: white;
+  border-radius: 2rem;
+}
+.Forgot_Auth {
+  width: 100%;
+  text-align: center;
+  padding: 1.8rem 0;
+  color: #ccc;
+  font-size: 0.8rem;
+}
+.Forgot_Auth a {
+  color: #ccc;
+}
+.Signup_Auth {
+  color: #3956ff;
+  margin-top: 0.6rem;
+  text-align: center;
+}
+.Signin_Register {
+  margin-top: 1.8rem;
+  color: #3956ff;
+  text-align: center;
+}
+.Header_Location {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #ccc;
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+}
+.alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+.alert-info {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+}
+.alert-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+}

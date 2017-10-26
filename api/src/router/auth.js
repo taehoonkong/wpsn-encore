@@ -12,6 +12,7 @@ const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const sgMail = require('@sendgrid/mail')
+const validator = require('validator')
 
 const util = require('../util')
 const query = require('../query')
@@ -59,6 +60,9 @@ module.exports = function(io) {
   // Local Strategy
   passport.use(new LocalStrategy({ usernameField: 'email'},
     (username, password, done) => {
+      if(!validator.isEmail(username)) {
+        done(new Error('올바른 Email 형식이 아닙니다.'))
+      }
       const email = username
       query.getUserByEmail({email})
         .then(matched => {
@@ -135,15 +139,26 @@ module.exports = function(io) {
     })
   })
 
-  // Loca register Renderer
+  // Local register Renderer
   router.get('/register', (req, res) => {
     res.render('register.pug')
   })
 
   // Local sign up Router
   router.post('/register', (req, res, next) => {
-    const { email, username }  = req.body
-    const password = bcrypt.hashSync(req.body.password, 10)
+    const { email, username, confirm }  = req.body
+    let password = req.body.password
+
+    if(!email || !username || !password || !confirm) {
+      return next(new util.registerRequire('모든 입력값은 필수요소 입니다.'))
+    } else if(!validator.isEmail(email)) {
+      return next(new util.registerRequire('올바른 Email 형식이 아닙니다.'))
+    } else if(password !== confirm) {
+      return next(new util.registerRequire('비밀번호와 확인 비밀번호가 일치하지 않습니다.'))
+    } else if(password.length < 8 || confirm.length < 8) {
+      return next(new util.registerRequire('8자 이상의 비밀번호를 입력해주세요.'))
+    } 
+    password = bcrypt.hashSync(password, 10)
 
     query.getUserByEmail({email})
       .then((user) => {
@@ -179,7 +194,7 @@ module.exports = function(io) {
         return next(err)
       }
       if(!user) {
-        return next(new util.requireField('email과 비밀번호를 입력해 주세요.'))  
+        return next(new util.requireField('Email과 비밀번호를 입력해 주세요.'))  
       }
       req.logIn(user, err => {
         if (err) {
@@ -240,6 +255,12 @@ module.exports = function(io) {
 
   router.post('/forgot', (req, res, next) => {
     const { email } = req.body
+    if(!email) {
+      return next(new util.emailNotExists('Email을 입력해주세요'))
+    }
+    else if(!validator.isEmail(email)) {
+      return next(new util.emailNotExists('올바른 Email 형식이 아닙니다.'))
+    }
     util.createToken()
       .then((token) => {
         const resetPasswordToken = token
@@ -283,7 +304,15 @@ module.exports = function(io) {
 
   router.post('/reset/:token', (req, res, next) => {
     const resetPasswordToken = req.params.token
-    const password = bcrypt.hashSync(req.body.password, 10)
+    let {password, confirm} = req.body
+    if(!password || !confirm) {
+      return next(new util.passwordResetRequire('모든 입력값은 필수요소 입니다.', resetPasswordToken))
+    } else if(password !== confirm) {
+      return next(new util.passwordResetRequire('비밀번호와 확인 비밀번호가 일치하지 않습니다.', resetPasswordToken))
+    } else if(password.length < 8 || confirm.length < 8) {
+      return next(new util.passwordResetRequire('8자 이상의 비밀번호를 입력해주세요.', resetPasswordToken))
+    }  
+    password = bcrypt.hashSync(password, 10)
     query.resetEmailFindToken({resetPasswordToken})
       .then(user => {
         if(!user) {
@@ -292,25 +321,16 @@ module.exports = function(io) {
         const {email} = user
         query.resetUserEmail({email, password})
           .then(user => {
-            /*
-            sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-            const msg = {
-              to: user.email,
-              from: 'admin@encore.com',
-              subject: 'Encore Password Reset Success',
-              text: 'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
-            }
-            sgMail.send(msg, (err) => {
-              const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
-              req.io.sockets.emit('test', {message});
-              req.flash('success', user.email + ' 의 비밀번호가 성공적으로 변경되었습니다.')
-              res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
-            })*/
             const message = `${user.email} 의 비밀번호가 성공적으로 변경되었습니다.`
             req.io.sockets.emit('reset_success', {message})
-            res.end()
+            req.flash('success', `${message}\n\n현재 창을 닫고 로그인해 주세요.`)
+            res.redirect(req.baseUrl + '/reset/' + resetPasswordToken + '/complete')
           })
       })
+  })
+
+  router.get('/reset/:token/complete', (req, res, next) => {
+    res.render('resetComplete.pug')
   })
 
   io.sockets.on('connection', socket => {

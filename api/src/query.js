@@ -221,7 +221,6 @@ module.exports = {
         'post.geo_x',
         'post.geo_y',
         'post.address',
-        'post.like_count',
         'post.date'
       )
       .orderBy('post.date', 'desc')

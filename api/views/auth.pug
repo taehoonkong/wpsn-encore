@@ -24,21 +24,21 @@ block body
   p: a(href='/auth/google') Google로 로그인
   p: a(href='/auth/facebook') Facebook으로 로그인
 
-  br
-
-  form(method='POST' action='/auth/register')
-    input(type='hidden' name='_csrf' value=csrfToken)
-    legend 회원가입
-    div.form-group
-      label(for='email') Email
-      input.form-control(type='text' id='email' placeholder='email' name='email')
-    div.form-group
-      label(for='username') UserName
-      input.form-control(type='text' id='username' placeholder='username' name='username')
-    div.form-group
-      label(for='password') Password
-      input.form-control(type='password' id='password' placeholder='password' name='password')
-    div.form-group
-      label(for='confirm') Confirm Password
-      input.form-control(type='password' id='confirm' placeholder='confirm password' name='confirm')
-    button.btn.btn-primary(type='submit') 회원가입
+  //- br
+  //-
+  //- form(method='POST' action='/auth/register')
+  //-   input(type='hidden' name='_csrf' value=csrfToken)
+  //-   legend 회원가입
+  //-   div.form-group
+  //-     label(for='email') Email
+  //-     input.form-control(type='text' id='email' placeholder='email' name='email')
+  //-   div.form-group
+  //-     label(for='username') UserName
+  //-     input.form-control(type='text' id='username' placeholder='username' name='username')
+  //-   div.form-group
+  //-     label(for='password') Password
+  //-     input.form-control(type='password' id='password' placeholder='password' name='password')
+  //-   div.form-group
+  //-     label(for='confirm') Confirm Password
+  //-     input.form-control(type='password' id='confirm' placeholder='confirm password' name='confirm')
+    //- button.btn.btn-primary(type='submit') 회원가입

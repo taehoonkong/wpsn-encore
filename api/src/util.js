@@ -30,6 +30,7 @@ class userAlreadyExists extends Error {
   constructor(message) {
     super(message)
     this.name = 'userAlreadyExist'
+    this.redirectUrl ='/register'
   }
 }
 

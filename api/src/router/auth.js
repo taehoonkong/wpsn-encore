@@ -135,6 +135,11 @@ module.exports = function(io) {
     })
   })
 
+  // Loca register Renderer
+  router.get('/register', (req, res) => {
+    res.render('register.pug')
+  })
+
   // Local sign up Router
   router.post('/register', (req, res, next) => {
     const { email, username }  = req.body

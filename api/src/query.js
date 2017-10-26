@@ -201,6 +201,31 @@ module.exports = {
   getLikedInfoByUserId(user_id) {
     return knex('like').where({user_id}).select('target_id').orderBy('target_id', 'desc')
   },
+  getLikedByUserId(user_id) {
+    return knex('like')
+      .join('post', 'like.target_id', '=', 'post.id')
+      .join('user', 'post.user_id', '=', 'user.id')
+      .where('like.user_id', user_id)
+      .select(
+        'post.id AS post_id',
+        'post.user_id AS post_user_id',
+        'user.username',
+        'user.avatar_url',
+        'post.picture_small',
+        'post.picture_big',
+        'post.preview',
+        'post.article',
+        'post.album',
+        'post.track',
+        'post.artist',
+        'post.geo_x',
+        'post.geo_y',
+        'post.address',
+        'post.like_count',
+        'post.date'
+      )
+      .orderBy('post.date', 'desc')
+  },
   getLikedState(user_id, target_id) {
     return knex('like').where({user_id, target_id}).select('target_id').first()
   },

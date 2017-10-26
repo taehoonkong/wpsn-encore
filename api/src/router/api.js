@@ -160,7 +160,7 @@ router.get('/user/:id', (req, res) => {
  * @apiName GetWholePost
  * @apiGroup Post
  * 
- * @apiParam {Number} (login) user_id 로그인한 사용자의 unique ID.
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
  *
  * @apiSuccess {Object[]} All 조회한 게시물의 전체 정보.
  * @apiSuccess {Object[]} Post 게시물에 대한 정보.
@@ -199,7 +199,7 @@ router.get('/post', (req, res) => {
  * @apiName GetPostByUserId
  * @apiGroup Post
  *
- * @apiParam {Number} (login) user_id 로그인한 사용자의 unique ID.
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
  * @apiParam {Number} id 정보를 조회할 사용자의 unique ID.
  *
  * @apiSuccess {Object[]} All 조회한 게시물의 전체 정보.
@@ -364,14 +364,14 @@ router.get('/post/:id/comment', (req, res) => {
  * @apiSuccess {Date} date 게시글 작성일자.
  *
  * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
+ *     HTTP/1.1 201 OK
  *     {
  *       "id": 2,
  *       "user_id": 3,
  *       "picture_small": "https://api.deezer.com/album/50368392/image",
  *       "picture_big": "https://e-cdns-images.dzcdn.net/images/cover/ac4e124fa125688b31b8b8bf9f79b95b/1000x1000-000000-80-0-0.jpg",
  *       "preview": "https://e-cdns-preview-5.dzcdn.net/stream/5e4b3f5997d8b757a952552103a1e5d5-2.mp3",
- *       "article": "",
+ *       "article": "write...",
  *       "album": "Bugatti Raww",
  *       "track": "Nigga Wit Money",
  *       "artist": "Tyga",
@@ -404,7 +404,73 @@ router.post('/post', (req, res) => {
     })
 })
 
-// 게시물 수정
+/**
+ * @api {patch} /api/post/:id 게시물 수정
+ * @apiName UpdatePost
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} id 수정하고자 하는 게시물의 unique ID.
+ * @apiParam {String} article 수정하고자 하는 게시글의 내용.
+ *
+ * @apiSuccess {Number} id 수정한 게시물의 unique ID.
+ * @apiSuccess {Number} user_id 작성자의 unique id.
+ * @apiSuccess {String} picture_small 작은 앨범자켓.
+ * @apiSuccess {String} picture_big 큰 앨범자켓.
+ * @apiSuccess {String} preview Mp3 파일의 경로.
+ * @apiSuccess {String} article 작성한 게시글의 내용.
+ * @apiSuccess {String} album 앨범이름.
+ * @apiSuccess {String} track 곡 제목.
+ * @apiSuccess {String} artist 아티스트명.
+ * @apiSuccess {Number} geo_x 게시글 등록 위치의 x값.
+ * @apiSuccess {Number} geo_y 게시글 등록 위치의 y값.
+ * @apiSuccess {String} address 게시글 등록 위치의 주소.
+ * @apiSuccess {Date} date 게시글 작성일자.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "id": 2,
+ *       "user_id": 3,
+ *       "picture_small": "https://api.deezer.com/album/50368392/image",
+ *       "picture_big": "https://e-cdns-images.dzcdn.net/images/cover/ac4e124fa125688b31b8b8bf9f79b95b/1000x1000-000000-80-0-0.jpg",
+ *       "preview": "https://e-cdns-preview-5.dzcdn.net/stream/5e4b3f5997d8b757a952552103a1e5d5-2.mp3",
+ *       "article": "update...",
+ *       "album": "Bugatti Raww",
+ *       "track": "Nigga Wit Money",
+ *       "artist": "Tyga",
+ *       "geo_x": 33,
+ *       "geo_y": 127,
+ *       "address": "서울시 강남구 신사동",
+ *       "date": "2017-10-24T10:24:58.000Z",
+ *     }    
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ * @apiError ForbiddenError Forbidden user access
+ * @apiError NotFoundError Request path not found
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ *
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *      "error": "ForbiddenError",
+ *      "message": "허가되지 않은 접근입니다.",
+ *      "status": 403
+ *     }
+ *
+ *     HTTP/1.1 404 Notfound
+ *     {
+ *      "error": "NotFoundError",
+ *      "message": "경로를 찾을 수 없습니다."
+ *      "status": 404
+ *     }
+ */
 router.patch('/post/:id', (req, res, next) => {
   const id = req.params.id
   const article = req.body.article
@@ -420,7 +486,40 @@ router.patch('/post/:id', (req, res, next) => {
     .catch(next)
 })
 
-// 게시물 삭제
+/**
+ * @api {delete} /api/post/:id 게시물 삭제
+ * @apiName DeletePost
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} id 삭제하고자 하는 게시물의 unique ID.
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ * @apiError ForbiddenError Forbidden user access
+ * @apiError NotFoundError Request path not found
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ *
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *      "error": "ForbiddenError",
+ *      "message": "허가되지 않은 접근입니다.",
+ *      "status": 403
+ *     }
+ *
+ *     HTTP/1.1 404 Notfound
+ *     {
+ *      "error": "NotFoundError",
+ *      "message": "경로를 찾을 수 없습니다."
+ *      "status": 404
+ *     }
+ */
 router.delete('/post/:id', (req, res, next) => {
   const id = req.params.id
   const user_id = req.user.id
@@ -435,7 +534,41 @@ router.delete('/post/:id', (req, res, next) => {
     .catch(next)
 })
 
-// 코멘트 작성
+/**
+ * @api {post} /api/post/:id/comment 코멘트 작성
+ * @apiName WriteComment
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {String} comment 작성할 코멘트 내용.
+ * @apiParam {Number} target_id 코멘트를 작성하고자 하는 게시물의 unique ID.
+ *
+ * @apiSuccess {Number} id 작성된 코멘트의 unique ID.
+ * @apiSuccess {Number} user_id 코멘트 작성자의 unique ID.
+ * @apiSuccess {Number} target_id 코멘트 작성한 게시물의 unique ID.
+ * @apiSuccess {String} comment 작성한 코멘트 내용.
+ * @apiSuccess {Date} date 코멘트 작성일.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 201 OK
+ *     {
+ *       "id": 22,
+ *       "user_id": 3,
+ *       "target_id": "1",
+ *       "comment": "good",
+ *       "date": "2017-10-24T10:24:58.000Z",
+ *     }  
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ */
 router.post('/post/:id/comment', (req, res) => {
   const target_id = req.params.id
   const comment = req.body.comment
@@ -446,8 +579,51 @@ router.post('/post/:id/comment', (req, res) => {
     })
 })
 
-
-// 코멘트 수정
+/**
+ * @api {patch} /api/post/:id/comment 코멘트 수정
+ * @apiName UpdateComment
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {String} comment 수정할 코멘트 내용.
+ * @apiParam {Number} id 코멘트를 수정하고자 하는 게시물의 unique ID.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "id": 22,
+ *       "user_id": 3,
+ *       "target_id": "1",
+ *       "comment": "good",
+ *       "date": "2017-10-24T10:24:58.000Z",
+ *     }  
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ * @apiError ForbiddenError Forbidden user access
+ * @apiError NotFoundError Request path not found
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ *
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *      "error": "ForbiddenError",
+ *      "message": "허가되지 않은 접근입니다.",
+ *      "status": 403
+ *     }
+ *
+ *     HTTP/1.1 404 Notfound
+ *     {
+ *      "error": "NotFoundError",
+ *      "message": "경로를 찾을 수 없습니다."
+ *      "status": 404
+ *     }
+ */
 router.patch('/post/:id/comment', (req, res, next) => {
   const id = req.params.id
   const comment = req.body.comment
@@ -463,7 +639,40 @@ router.patch('/post/:id/comment', (req, res, next) => {
     .catch(next)
 })
 
-// 코멘트 삭제
+/**
+ * @api {delete} /api/post/:id/comment 코멘트 삭제
+ * @apiName DeleteComment
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} id 코멘트를 수정하고자 하는 게시물의 unique ID.
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ * @apiError ForbiddenError Forbidden user access
+ * @apiError NotFoundError Request path not found
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ *
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *      "error": "ForbiddenError",
+ *      "message": "허가되지 않은 접근입니다.",
+ *      "status": 403
+ *     }
+ *
+ *     HTTP/1.1 404 Notfound
+ *     {
+ *      "error": "NotFoundError",
+ *      "message": "경로를 찾을 수 없습니다."
+ *      "status": 404
+ *     }
+ */
 router.delete('/post/:id/comment', (req, res, next) => {
   const id = req.params.id
   const user_id = req.user.id
@@ -485,7 +694,24 @@ router.get('/user/:id/liked', (req, res) => {
   })
 })
 
-// 좋아요 등록
+/**
+ * @api {post} /api/post/:id/like 좋아요 등록
+ * @apiName CreateLike
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} target_id 좋아요 등록하고자 하는 게시물의 unique ID.
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ */
 router.post('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
@@ -510,7 +736,7 @@ router.get('/history', (req, res) => {
   const user_id = req.user.id
   query.getSearchKeyWordByUserId({user_id})
     .then(result => {
-      res.send(result)
+      res.status(200).send(result)
     })
 })
 

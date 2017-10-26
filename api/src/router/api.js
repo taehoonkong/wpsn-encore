@@ -159,18 +159,18 @@ router.get('/user/:id', (req, res) => {
  * @api {get} /api/post/ 전체 게시물 조회(TimeLine)
  * @apiName GetWholePost
  * @apiGroup Post
+ * 
+ * @apiParam {Number} (login) user_id 로그인한 사용자의 unique ID.
  *
  * @apiSuccess {Object[]} All 조회한 게시물의 전체 정보.
  * @apiSuccess {Object[]} Post 게시물에 대한 정보.
  * @apiSuccess {Object[]} Comment 댓글에 대한 정보.
- * @apiSuccess {Object[]} Like 좋아요에 대한 정보.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     [
  *      [Post],
- *      [Comment],
- *      [Like]
+ *      [Comment]
  *     ]
  *
  * @apiError UnauthorizedError No authorization token was found.
@@ -184,19 +184,10 @@ router.get('/user/:id', (req, res) => {
  *     } 
  */
 router.get('/post', (req, res) => {
-  const post = query.getWholePost()
+  const user_id = req.user.id
+  const post = query.getWholePost(user_id)
   const comment = query.getWholeComment()
-  const liked = query.getLikedInfoByUserId(req.user.id)
-  Promise.all([post, comment, liked]).then(data => {
-    if(data[2]) {
-      data[2].forEach(dataLike => {
-        data[0].forEach(dataPost => {
-          if(dataLike.target_id === dataPost.id) {
-            dataPost.likedState = true
-          } 
-        })
-      })
-    }
+  Promise.all([post, comment]).then(data => {
     res.status(200).send(data)
   }, reject => {
     console.log('reject')
@@ -208,19 +199,18 @@ router.get('/post', (req, res) => {
  * @apiName GetPostByUserId
  * @apiGroup Post
  *
+ * @apiParam {Number} (login) user_id 로그인한 사용자의 unique ID.
  * @apiParam {Number} id 정보를 조회할 사용자의 unique ID.
  *
  * @apiSuccess {Object[]} All 조회한 게시물의 전체 정보.
  * @apiSuccess {Object[]} Post 게시물에 대한 정보.
  * @apiSuccess {Object[]} Comment 댓글에 대한 정보.
- * @apiSuccess {Object[]} Like 좋아요에 대한 정보.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     [
  *      [Post],
- *      [Comment],
- *      [Like]
+ *      [Comment]
  *     ]
  *
  * @apiError UnauthorizedError No authorization token was found.
@@ -234,20 +224,11 @@ router.get('/post', (req, res) => {
  *     } 
  */
 router.get('/user/:id/post', (req, res) => {
-  const user_id = req.params.id
-  const post = query.getPostByUserId(user_id)
-  const comment = query.getCommentByUserId(user_id)
-  const liked = query.getLikedInfoByUserId(req.user.id)
-  Promise.all([post, comment, liked]).then(data => {
-    if(data[2]) {
-      data[2].forEach(dataLike => {
-        data[0].forEach(dataPost => {
-          if(dataLike.target_id === dataPost.id) {
-            dataPost.likedState = true
-          }
-        })
-      })
-    }
+  const id = req.params.id
+  const user_id = req.user.id
+  const post = query.getPostByUserId({id, user_id})
+  const comment = query.getCommentByUserId(id)
+  Promise.all([post, comment]).then(data => { 
     res.status(200).send(data)
   }, reject => {
     console.log('reject')
@@ -294,7 +275,7 @@ router.get('/post/:id', (req, res) => {
   Promise.all([post, comment, liked]).then(data => {
     if (data[2] != null) {
       data[0].likedState = true
-    }
+    } else data[0].likedState = false
     res.status(200).send(data)
   }, reject => {
     console.log(reject)

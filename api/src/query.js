@@ -143,32 +143,38 @@ module.exports = {
           .first()
       })
   },
-  getWholePost() {
+  getWholePost(user_id) {
+    const subquery = knex('like').where({user_id}).as('liked_table')
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
       .leftJoin('comment', 'post.id', '=', 'comment.target_id')
       .leftJoin('like', 'post.id', '=', 'like.target_id')
+      .leftJoin(subquery, 'liked_table.target_id', '=', 'post.id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date'
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date',
+        knex.raw('(case when liked_table.id is not null then true when liked_table.id is null then false end) as likedState')
       )
       .countDistinct('comment.comment as comment_count')
       .countDistinct('like.id as like_count')
       .groupBy('post.id')
       .orderBy('post.date', 'desc')
   },
-  getPostByUserId(user_id) {
+  getPostByUserId({id, user_id}) {
+    const subquery = knex('like').where({user_id}).as('liked_table')
     return knex('post')
       .join('user', 'post.user_id', '=', 'user.id')
       .leftJoin('comment', 'post.id', '=', 'comment.target_id')
       .leftJoin('like', 'post.id', '=', 'like.target_id')
+      .leftJoin(subquery, 'liked_table.target_id', '=', 'post.id')
       .select('post.id', 'post.user_id','user.username', 'user.avatar_url',
         'post.picture_small', 'post.picture_big', 'post.preview', 'post.article', 'post.album',
-        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date'
+        'post.track', 'post.artist', 'post.geo_x', 'post.geo_y', 'post.address', 'post.date',
+        knex.raw('(case when liked_table.id is not null then true when liked_table.id is null then false end) as likedState')
       )
       .countDistinct('comment.comment as comment_count')
       .countDistinct('like.id as like_count')
-      .where('post.user_id', user_id)
+      .where('post.user_id', id)
       .groupBy('post.id')
       .orderBy('post.date', 'desc')
   },

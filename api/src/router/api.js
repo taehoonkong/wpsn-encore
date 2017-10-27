@@ -588,13 +588,19 @@ router.post('/post/:id/comment', (req, res) => {
  * @apiParam {String} comment 수정할 코멘트 내용.
  * @apiParam {Number} id 코멘트를 수정하고자 하는 게시물의 unique ID.
  *
+ * @apiSuccess {Number} id 수정된 코멘트의 unique ID.
+ * @apiSuccess {Number} user_id 코멘트 수정자의 unique ID.
+ * @apiSuccess {Number} target_id 코멘트 수정한 게시물의 unique ID.
+ * @apiSuccess {String} comment 수정한 코멘트 내용.
+ * @apiSuccess {Date} date 코멘트 작성일.
+ *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "id": 22,
  *       "user_id": 3,
  *       "target_id": "1",
- *       "comment": "good",
+ *       "comment": "patched",
  *       "date": "2017-10-24T10:24:58.000Z",
  *     }  
  *
@@ -687,10 +693,63 @@ router.delete('/post/:id/comment', (req, res, next) => {
     .catch(next)
 })
 
-// 특정 유저가 좋아요한 게시물
+/**
+ * @api {get} /api/user/:id/liked 특정 유저가 좋아요한 게시물
+ * @apiName GetLikedByUserId
+ * @apiGroup Post
+ *
+ * @apiParam {Number} user_id 좋아요한 게시물을 조회하고자 하는 사용자의 unique ID.
+ *
+ * @apiSuccess {Number} post_id 좋아요한 게시물의 unique ID.
+ * @apiSuccess {Number} post_user_id 게시물 작성자의 unique ID.
+ * @apiSuccess {String} user_name 게시물 작성자의 user_name.
+ * @apiSuccess {String} avatar_url 게시물 작성자의 avatar_url.
+ * @apiSuccess {String} picture_small 작은 사진.
+ * @apiSuccess {String} picture_big 큰 사진.
+ * @apiSuccess {String} preview Mp3 경로
+ * @apiSuccess {String} article 게시물 내용.
+ * @apiSuccess {String} album 앨범정보.
+ * @apiSuccess {String} track 곡 정보.
+ * @apiSuccess {String} artist 아티스트 정보.
+ * @apiSuccess {Number} geo_x 게시물 작성 위치의 x 좌표 값.
+ * @apiSuccess {Number} geo_y 게시물 작성 위치의 y 좌표 값.
+ * @apiSuccess {String} address 게시물 작성 주소.
+ * @apiSuccess {Date} date 게시물 작성일.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "post_id": 2,
+ *       "post_user_id": 3,
+ *       "username": "Taehoon Kong",
+ *       "avatar_url": "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50",
+ *       "picture_small": "https://api.deezer.com/album/6604163/image",
+ *       "picture_big": "https://cdns-images.dzcdn.net/images/cover/e9c6f78e4dc0f050658d353679f2e30a/1000x1000-000000-80-0-0.jpg",
+ *       "preview": "https://cdns-preview-a.dzcdn.net/stream/ae1059d9fa0fd93b7c5328ee3ea3d090-1.mp3",
+ *       "article": "지금 놀고있어요",
+ *       "album": "Were Up All Night To Get Lucky (Daft Punk feat. Pharell Pharrell Williams, Glee Cast Cover We're)",
+ *       "track": "Get Lucky (Daft Punk feat. Pharrell Williams Cover)",
+ *       "artist": "GMPresents & Jocelyn Scofield",
+ *       "geo_x": 37,
+ *       "geo_y": 127,
+ *       "address": "대한민국 경기도 평택시 오성면 창신뜰길",
+ *       "date": "2017-10-27T06:07:27.000Z"
+ *     } 
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/user/:id/liked', (req, res) => {
-  query.getLikedByUserId(req.params.id).then(post => {
-    res.send(post)
+  const user_id = req.params.id
+  query.getLikedByUserId(user_id).then(post => {
+    res.status(200).send(post)
   })
 })
 
@@ -721,7 +780,24 @@ router.post('/post/:id/like', (req, res) => {
     })
 })
 
-// 좋아요 해제
+/**
+ * @api {delete} /api/post/:id/like 좋아요 해제(삭제)
+ * @apiName DeleteLike
+ * @apiGroup Post
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} target_id 좋아요 삭제하고자 하는 게시물의 unique ID.
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ */
 router.delete('/post/:id/like', (req, res) => {
   const user_id = req.user.id
   const target_id = req.params.id
@@ -731,7 +807,39 @@ router.delete('/post/:id/like', (req, res) => {
     })
 })
 
-// 검색 history 가져오기
+/**
+ * @api {get} /api/history 로그인한 사용자의 음악검색 기록 요청
+ * @apiName GetHistory
+ * @apiGroup Music
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ *
+ * @apiSuccess {Number} id 음악 정보 검색 후 저장된 unique ID.
+ * @apiSuccess {Number} user_id 음악 정보 검색한 사용자의 unique ID.
+ * @apiSuccess {String} keyword 음악 정보 검색 keyword.
+ * @apiSuccess {String} type 음악 정보 검색 type(artist, album, track).
+ * @apiSuccess {Date} date 음악 정보 검색일자.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "id": 2,
+ *       "user_id": 3,
+ *       "keyword": "Adele",
+ *       "type": "track",
+ *       "date": "2017-10-27T06:07:27.000Z"
+ *     } 
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/history', (req, res) => {
   const user_id = req.user.id
   query.getSearchKeyWordByUserId({user_id})
@@ -740,7 +848,40 @@ router.get('/history', (req, res) => {
     })
 })
 
-// 검색 history 삭제
+/**
+ * @api {delete} /api/history/:id 검색 히스토리 삭제
+ * @apiName DeleteHistory
+ * @apiGroup Music
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {Number} id 삭제하고자 하는 검색기록의 unique ID.
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ * @apiError ForbiddenError Forbidden user access
+ * @apiError NotFoundError Request path not found
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }
+ *
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *      "error": "ForbiddenError",
+ *      "message": "허가되지 않은 접근입니다.",
+ *      "status": 403
+ *     }
+ *
+ *     HTTP/1.1 404 Notfound
+ *     {
+ *      "error": "NotFoundError",
+ *      "message": "경로를 찾을 수 없습니다."
+ *      "status": 404
+ *     }
+ */
 router.delete('/history/:id', (req, res, next) => {
   const id = req.params.id
   const user_id = req.user.id
@@ -778,7 +919,7 @@ router.get('/artist/:keyword', (req, res) => {
           })
         }
       }
-      res.send(return_result)
+      res.status(200).send(return_result)
     })
     .then(() => {
       query.createSearchKeyWordByUserId({user_id, keyword, type})
@@ -811,7 +952,7 @@ router.get('/artist/album/:keyword', (req, res) => {
           })
         }
       }
-      res.send(return_result)
+      res.status(200).send(return_result)
     })
 })
 
@@ -841,7 +982,7 @@ router.get('/album/:keyword', (req, res) => {
           })
         }
       }
-      res.send(return_result)
+      res.status(200).send(return_result)
     })
     .then(() => {
       query.createSearchKeyWordByUserId({user_id, keyword, type})
@@ -873,7 +1014,7 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
           type: data.tracks.data[i].type
         })
       }
-      res.send(return_result)
+      res.status(200).send(return_result)
     })
 })
 
@@ -905,7 +1046,7 @@ router.get('/track/:keyword', (req, res) => {
           })
         }
       }
-      res.send(return_result)
+      res.status(200).send(return_result)
     })
     .then(() => {
       query.createSearchKeyWordByUserId({user_id, keyword, type})

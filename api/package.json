@@ -4,7 +4,7 @@
   "description": "",
   "apidoc": {
     "title": "Encore API",
-    "url" : "http://localhost:3000"
+    "url" : "https://encoreserver.texcore.io"
   },
   "main": "index.js",
   "scripts": {

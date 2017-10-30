@@ -125,12 +125,13 @@ module.exports = function(io) {
       done(err)
     })
   }))
-
+  
+  // auth root
   router.get('/', (req, res) => {
     res.render('auth.pug')
   })
-
-  // If login success
+  
+  // success
   router.get('/success', mw.loginRequired, (req, res) => {
     const token = jwt.sign({id: req.user.id}, process.env.JWT_SECRET)
     res.render('success.pug', {

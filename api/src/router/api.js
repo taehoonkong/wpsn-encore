@@ -894,8 +894,49 @@ router.delete('/history/:id', (req, res, next) => {
     .catch(next)
 })
 
-// artist 검색
-// keyword에 artist name을 넣어주어야 한다.
+/**
+ * @api {get} /api/artist/:keyword artist 이름으로 음원정보 검색 후 history에 저장
+ * @apiName SearchKeywordByArtistName
+ * @apiGroup Music
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {String} keyword 검색할 아티스트 이름
+ * @apiParam {String} type 검색 keyword의 type(artist)
+ * @apiParam {Number} id history의 10번째(삭제대상) unique ID.
+ *
+ * @apiSuccess {Number} artist_id deezer api artist id.
+ * @apiSuccess {String} artist_name deezer api artist name.
+ * @apiSuccess {String} artist_picture_small deezer api small artist picture.
+ * @apiSuccess {String} artist_picture_lg deezer api large artist picture.
+ * @apiSuccess {String} artist_top_track deezer api artist top track.
+ * @apiSuccess {String} type deezer api type.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *        {
+ *          "artist_id": 75798,
+ *          "artist_name": "Adele",
+ *          "artist_picture_sm": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/56x56-000000-80-0-0.jpg",
+ *          "artist_picture_lg": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/1000x1000-000000-80-0-0.jpg",
+ *          "artist_top_track": "https://api.deezer.com/artist/75798/top?limit=50",
+ *          "type": "artist"
+ *        },
+ *        {
+ *          ...
+ *        }
+ *     ]
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/artist/:keyword', (req, res) => {
   const user_id = req.user.id
   const keyword = req.params.keyword.toLowerCase()
@@ -935,8 +976,52 @@ router.get('/artist/:keyword', (req, res) => {
     })
 })
 
-// artist 검색 후 해당 artist가 발매한 음반을 검색
-// keyword에 artist name을 넣어주어야 한다.
+/**
+ * @api {get} /api/artist/album/:keyword artist 이름으로 음원정보(album) 검색
+ * @apiName SearchKeywordByArtistName(Album)
+ * @apiGroup Music
+ *
+ * @apiParam {String} keyword api/artist/:keyword요청을 통하여 결과값으로 받은 artist의 name(deezer api)
+ *
+ * @apiSuccess {Number} album_id deezer api album id.
+ * @apiSuccess {String} album_artist  deezer api artist name.
+ * @apiSuccess {String} album_title deezer api album title.
+ * @apiSuccess {String} album_picture_sm deezer api small album picture.
+ * @apiSuccess {String} album_picture_lg deezer api large album picture.
+ * @apiSuccess {String} album_tracklist deezer api album tracklist.
+ * @apiSuccess {String} artist_picture_sm deezer api small artist picture.
+ * @apiSuccess {String} artist_picture_lg deezer api large artist picture.
+ * @apiSuccess {String} type deezer api type.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *        {
+ *          "album_id": 75798,
+ *          "album_artist": "Adele",
+ *          "album_title": "Skyfall",
+ *          "album_picture_sm": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/56x56-000000-80-0-0.jpg",
+ *          "album_picture_lg": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/1000x1000-000000-80-0-0.jpg",
+ *          "album_tracklist": "https://api.deezer.com/album/11259262/tracks",
+ *          "artist_picture_sm": "https://api.deezer.com/artist/75798/image",
+ *          "artist_picture_lg": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/1000x1000-000000-80-0-0.jpg",
+ *          "type": "artist"
+ *        },
+ *        {
+ *          ...
+ *        }
+ *     ]
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/artist/album/:keyword', (req, res) => {
   const keyword = req.params.keyword.toLowerCase()
   axios.get(`https://api.deezer.com/search/album/autocomplete?limit=100&q=${keyword}`)
@@ -965,8 +1050,50 @@ router.get('/artist/album/:keyword', (req, res) => {
     })
 })
 
-// album 검색
-// keyword에 album name을 넣어주어야 한다.
+/**
+ * @api {get} /api/album/:keyword album 이름으로 음원정보 검색 후 history에 저장
+ * @apiName SearchKeywordByAlbumName
+ * @apiGroup Music
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {String} keyword 검색할 앨범 이름
+ * @apiParam {String} type 검색 keyword의 type(album)
+ * @apiParam {Number} id history의 10번째(삭제대상) unique ID.
+ *
+ * @apiSuccess {Number} album_id deezer api album id.
+ * @apiSuccess {String} album_artist deezer api artist name.
+ * @apiSuccess {String} album_title deezer api album title. 
+ * @apiSuccess {String} album_picture_sm deezer api small album picture.
+ * @apiSuccess {String} album_picture_lg deezer api large album picture.
+ * @apiSuccess {String} album_tracklist deezer api album tracklist.
+ * @apiSuccess {String} type deezer api type.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *        {
+ *          "artist_id": 75798,
+ *          "artist_name": "Adele",
+ *          "artist_picture_sm": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/56x56-000000-80-0-0.jpg",
+ *          "artist_picture_lg": "https://e-cdns-images.dzcdn.net/images/artist/22c83631d238c4e21800a75a79c54c61/1000x1000-000000-80-0-0.jpg",
+ *          "artist_top_track": "https://api.deezer.com/artist/75798/top?limit=50",
+ *          "type": "artist"
+ *        },
+ *        {
+ *          ...
+ *        }
+ *     ]
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/album/:keyword', (req, res) => {
   const user_id = req.user.id
   const keyword = req.params.keyword.toLowerCase()
@@ -1007,8 +1134,52 @@ router.get('/album/:keyword', (req, res) => {
     })
 })
 
-// album 검색 후에 해당 album에 담겨있는 tracklist를 검색
-// keyword에 album_id를 넣어주어야 한다.
+/**
+ * @api {get} /api/album/tracklist/:keyword album 이름으로 tracklist 검색
+ * @apiName SearchKeywordByAlbumName(TrackList)
+ * @apiGroup Music
+ *
+ * @apiParam {String} keyword api/album/:keyword요청을 통하여 결과값으로 받은 album의 album id(deezer api)
+ *
+ * @apiSuccess {Number} track_id deezer api track id.
+ * @apiSuccess {String} track_artist  deezer api track artist name.
+ * @apiSuccess {String} track_name deezer api track name.
+ * @apiSuccess {String} track_mp3_url deezer api mp3 url.
+ * @apiSuccess {String} album_artist deezer api album artist name.
+ * @apiSuccess {String} album_cover_sm deezer api small album cover.
+ * @apiSuccess {String} album_cover_lg deezer api large album cover.
+ * @apiSuccess {String} release_date deezer api release date.
+ * @apiSuccess {String} type deezer api type.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *        {
+ *          "track_id": 46244111,
+ *          "track_artist": "X JAPAN",
+ *          "track_name": "Prologue (World Anthem)",
+ *          "track_mp3_url": "https://e-cdns-preview-3.dzcdn.net/stream/31ad98b7563eb80c7f775acbe0d96c49-2.mp3",
+ *          "album_artist": "X JAPAN",
+ *          "album_cover_sm": "https://api.deezer.com/album/4577391/image",
+ *          "album_cover_lg": "https://e-cdns-images.dzcdn.net/images/cover/48c7bd8caa25125b7f9be898ec740438/1000x1000-000000-80-0-0.jpg",
+ *          "release_date": "2008-09-16",
+ *          "type": "track"
+ *        },
+ *        {
+ *          ...
+ *        }
+ *     ]
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/album/tracklist/:keyword', (req, res) =>{
   const keyword = req.params.keyword
   axios.get(`https://api.deezer.com/album/${keyword}`)
@@ -1036,8 +1207,55 @@ router.get('/album/tracklist/:keyword', (req, res) =>{
     })
 })
 
-// track 검색
-// keyword에 track name을 넣어주어야 한다.
+/**
+ * @api {get} /api/track/:keyword track 이름으로 음원정보 검색 후 history에 저장
+ * @apiName SearchKeywordByTrackName
+ * @apiGroup Music
+ *
+ * @apiParam (login) {Number} user_id 로그인한 사용자의 unique ID.
+ * @apiParam {String} keyword 검색할 트랙 이름
+ * @apiParam {String} type 검색 keyword의 type(track)
+ * @apiParam {Number} id history의 10번째(삭제대상) unique ID.
+ *
+ * @apiSuccess {Number} track_id deezer api album id.
+ * @apiSuccess {String} track_artist deezer api artist name.
+ * @apiSuccess {String} track_name deezer api track name.
+ * @apiSuccess {String} track_mp3_url deezer api mp3 url. 
+ * @apiSuccess {String} track_picture_sm deezer api small album picture.
+ * @apiSuccess {String} track_picture_lg deezer api large album picture.
+ * @apiSuccess {String} album_id deezer api album id.
+ * @apiSuccess {String} album_title deezer api album title.
+ * @apiSuccess {String} type deezer api type.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *        {
+ *          "track_id": 421928762,
+ *          "track_artist": "Lonnie Johnson",
+ *          "track_name": "Blue Blood Blues",
+ *          "track_mp3_url": "https://e-cdns-preview-5.dzcdn.net/stream/5ea22a8c1acae4ce7eea6de5515d2401-0.mp3",
+ *          "track_picture_sm": "https://api.deezer.com/album/50563592/image",
+ *          "track_picture_lg": "https://e-cdns-images.dzcdn.net/images/cover/5b6c34e8798f3edd7ff482b5334bfd3f/1000x1000-000000-80-0-0.jpg",
+ *          "album_id": 50563592,
+ *          "album_title": "Long Drive Blues",
+ *          "type": "track"
+ *        },
+ *        {
+ *          ...
+ *        }
+ *     ]
+ *
+ * @apiError UnauthorizedError No authorization token was found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "error": "UnauthorizedError",
+ *       "message": "No authorization token was found",
+ *       "status": 401
+ *     }     
+ */
 router.get('/track/:keyword', (req, res) => {
   const user_id = req.user.id
   const keyword = req.params.keyword.toLowerCase()

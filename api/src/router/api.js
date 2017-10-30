@@ -922,7 +922,16 @@ router.get('/artist/:keyword', (req, res) => {
       res.status(200).send(return_result)
     })
     .then(() => {
-      query.createSearchKeyWordByUserId({user_id, keyword, type})
+      query.getSearchKeyWordByUserId({user_id})
+        .then(result => {
+          if(result.length === 10) {
+            const id = result[9].id
+            query.deleteSearchKeyWordById({id})
+              .then(() => query.createSearchKeyWordByUserId({user_id, keyword, type}))
+          } else {
+            query.createSearchKeyWordByUserId({user_id, keyword, type})
+          }
+        })
     })
 })
 
@@ -985,7 +994,16 @@ router.get('/album/:keyword', (req, res) => {
       res.status(200).send(return_result)
     })
     .then(() => {
-      query.createSearchKeyWordByUserId({user_id, keyword, type})
+      query.getSearchKeyWordByUserId({user_id})
+        .then(result => {
+          if(result.length === 10) {
+            const id = result[9].id
+            query.deleteSearchKeyWordById({id})
+              .then(() => query.createSearchKeyWordByUserId({user_id, keyword, type}))
+          } else {
+            query.createSearchKeyWordByUserId({user_id, keyword, type})
+          }
+        })
     })
 })
 
@@ -1049,7 +1067,16 @@ router.get('/track/:keyword', (req, res) => {
       res.status(200).send(return_result)
     })
     .then(() => {
-      query.createSearchKeyWordByUserId({user_id, keyword, type})
+      query.getSearchKeyWordByUserId({user_id})
+        .then(result => {
+          if(result.length === 10) {
+            const id = result[9].id
+            query.deleteSearchKeyWordById({id})
+              .then(() => query.createSearchKeyWordByUserId({user_id, keyword, type}))
+          } else {
+            query.createSearchKeyWordByUserId({user_id, keyword, type})
+          }
+        })
     })
 })
 

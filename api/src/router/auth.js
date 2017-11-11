@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieSession = require('cookie-session')
-// const csurf = require('csurf')
+const csurf = require('csurf')
 const flash = require('connect-flash')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
@@ -30,7 +30,7 @@ module.exports = function(io) {
     ]
   }))
   router.use(flash())
-  // router.use(csurf())
+  router.use(csurf())
   router.use(mw.insertReq)
   router.use(mw.insertToken)
   router.use(function(req,res,next){
